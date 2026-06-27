@@ -1,0 +1,2410 @@
+cat > /mnt/user-data/outputs/safecircle-prototype.html << 'HTMLEOF' <!DOCTYPE html>
+  <html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeCircle — Interactive Prototype</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet">
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: 'Inter', system-ui, sans-serif;
+        background: linear-gradient(135deg, #0B1623 0%, #0F2040 60%, #0B1623 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: 24px;
+        gap: 16px;
+      }
+
+      .prototype-label {
+        color: rgba(255, 255, 255, 0.35);
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .screen-label {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 12px;
+        font-weight: 500;
+        text-align: center;
+        min-height: 18px;
+        transition: opacity 0.2s;
+      }
+
+      .phone {
+        width: 375px;
+        height: 812px;
+        background: #fff;
+        border-radius: 52px;
+        overflow: hidden;
+        position: relative;
+        box-shadow: 0 0 0 10px #1a1a2e, 0 0 0 12px #2a2a4a, 0 40px 100px rgba(0, 0, 0, 0.7);
+        flex-shrink: 0;
+      }
+
+      .phone-inner {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        border-radius: 52px;
+      }
+
+      .status-bar {
+        height: 50px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        padding: 0 28px 10px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #111;
+        position: relative;
+        z-index: 100;
+        background: inherit;
+      }
+
+      .status-bar.dark {
+        color: #fff;
+      }
+
+      .notch {
+        width: 126px;
+        height: 34px;
+        background: #000;
+        border-radius: 0 0 22px 22px;
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 101;
+      }
+
+      .notch-island {
+        width: 100px;
+        height: 22px;
+        background: #000;
+        border-radius: 20px;
+        position: absolute;
+        top: 12px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .status-icons {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .status-icons svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      .screen {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s;
+        transform: translateX(100%);
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .screen.active {
+        transform: translateX(0);
+        opacity: 1;
+        pointer-events: all;
+      }
+
+      .screen.prev {
+        transform: translateX(-25%);
+        opacity: 0;
+      }
+
+      .screen-body {
+        flex: 1;
+        overflow-y: auto;
+        padding-bottom: 90px;
+      }
+
+      .screen-body.no-pad {
+        padding-bottom: 0;
+      }
+
+      .screen-body::-webkit-scrollbar {
+        display: none;
+      }
+
+      /* Colors */
+      :root {
+        --brand: #2563EB;
+        --brand-light: #EFF6FF;
+        --brand-dark: #1E40AF;
+        --danger: #DC2626;
+        --danger-light: #FEF2F2;
+        --safe: #16A34A;
+        --safe-light: #F0FDF4;
+        --companion: #7C3AED;
+        --companion-light: #F5F3FF;
+        --warning: #D97706;
+        --warning-light: #FFFBEB;
+        --txt: #111827;
+        --txt2: #6B7280;
+        --txt3: #9CA3AF;
+        --border: #E5E7EB;
+        --bg: #F9FAFB;
+        --card: #fff;
+      }
+
+      /* ─── ROLE SELECT ─── */
+      #role-select {
+        background: linear-gradient(160deg, #1E3A8A 0%, #1E40AF 40%, #2563EB 100%);
+      }
+
+      #role-select .status-bar {
+        background: transparent;
+        color: #fff;
+      }
+
+      .role-hero {
+        padding: 40px 28px 24px;
+        color: #fff;
+      }
+
+      .role-hero .eyebrow {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        opacity: 0.7;
+        margin-bottom: 12px;
+      }
+
+      .role-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 8px;
+      }
+
+      .role-logo svg {
+        width: 40px;
+        height: 40px;
+      }
+
+      .role-logo span {
+        font-size: 28px;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+      }
+
+      .role-hero p {
+        font-size: 15px;
+        opacity: 0.8;
+        line-height: 1.5;
+        margin-top: 8px;
+      }
+
+      .role-cards {
+        padding: 0 20px 32px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .role-card {
+        background: #fff;
+        border-radius: 20px;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        cursor: pointer;
+        transition: transform 0.15s, box-shadow 0.15s;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+
+      .role-card:active {
+        transform: scale(0.97);
+      }
+
+      .role-card:hover {
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+      }
+
+      .role-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        flex-shrink: 0;
+      }
+
+      .role-icon.parent {
+        background: #EFF6FF;
+      }
+
+      .role-icon.student {
+        background: #F5F3FF;
+      }
+
+      .role-icon.senior {
+        background: #F0FDF4;
+      }
+
+      .role-card-text h3 {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--txt);
+        margin-bottom: 3px;
+      }
+
+      .role-card-text p {
+        font-size: 13px;
+        color: var(--txt2);
+        line-height: 1.4;
+      }
+
+      .role-card-arrow {
+        margin-left: auto;
+        color: var(--txt3);
+      }
+
+      /* ─── BOTTOM NAV ─── */
+      .bottom-nav {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: #fff;
+        border-top: 1px solid var(--border);
+        display: flex;
+        padding: 8px 0 24px;
+        z-index: 50;
+      }
+
+      .bottom-nav-item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+        cursor: pointer;
+        color: var(--txt3);
+        transition: color 0.15s;
+      }
+
+      .bottom-nav-item.active {
+        color: var(--brand);
+      }
+
+      .bottom-nav-item svg {
+        width: 22px;
+        height: 22px;
+      }
+
+      .bottom-nav-item span {
+        font-size: 10px;
+        font-weight: 500;
+      }
+
+      /* ─── SENIOR HOME ─── */
+      #senior-home {
+        background: var(--bg);
+      }
+
+      .senior-header {
+        background: linear-gradient(135deg, #16A34A, #059669);
+        padding: 60px 24px 32px;
+        color: #fff;
+        position: relative;
+      }
+
+      .senior-greeting {
+        font-size: 13px;
+        font-weight: 500;
+        opacity: 0.85;
+        margin-bottom: 4px;
+      }
+
+      .senior-name {
+        font-size: 26px;
+        font-weight: 800;
+        letter-spacing: -0.3px;
+      }
+
+      .senior-safe-badge {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 20px;
+        padding: 6px 14px;
+        font-size: 13px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 12px;
+      }
+
+      .big-safe-btn {
+        margin: 24px 20px 0;
+        background: var(--brand);
+        color: #fff;
+        border: none;
+        border-radius: 24px;
+        padding: 22px;
+        font-size: 19px;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        width: calc(100% - 40px);
+        box-shadow: 0 8px 24px rgba(37, 99, 235, 0.35);
+        transition: transform 0.15s, box-shadow 0.15s;
+        letter-spacing: -0.2px;
+      }
+
+      .big-safe-btn:active {
+        transform: scale(0.97);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+      }
+
+      .big-safe-btn svg {
+        width: 28px;
+        height: 28px;
+      }
+
+      .section-label {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--txt3);
+        padding: 20px 20px 10px;
+      }
+
+      .tip-card {
+        margin: 0 20px;
+        background: var(--warning-light);
+        border: 1px solid #FDE68A;
+        border-radius: 16px;
+        padding: 16px;
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+      }
+
+      .tip-card .tip-icon {
+        font-size: 20px;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+
+      .tip-card-text h4 {
+        font-size: 14px;
+        font-weight: 700;
+        color: #92400E;
+        margin-bottom: 3px;
+      }
+
+      .tip-card-text p {
+        font-size: 13px;
+        color: #78350F;
+        line-height: 1.5;
+      }
+
+      .recent-flag {
+        margin: 0 20px 12px;
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .flag-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--safe);
+        flex-shrink: 0;
+      }
+
+      .flag-dot.warn {
+        background: var(--warning);
+      }
+
+      .recent-flag-text {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--txt);
+        flex: 1;
+      }
+
+      .recent-flag-time {
+        font-size: 12px;
+        color: var(--txt3);
+      }
+
+      /* ─── TOP NAV BAR ─── */
+      .top-nav {
+        display: flex;
+        align-items: center;
+        padding: 16px 20px 8px;
+        gap: 12px;
+        position: relative;
+        z-index: 10;
+        background: inherit;
+      }
+
+      .back-btn {
+        width: 36px;
+        height: 36px;
+        background: var(--bg);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border: 1px solid var(--border);
+        flex-shrink: 0;
+      }
+
+      .back-btn:active {
+        background: var(--border);
+      }
+
+      .top-nav h2 {
+        font-size: 17px;
+        font-weight: 700;
+        color: var(--txt);
+        flex: 1;
+        text-align: center;
+      }
+
+      .top-nav-spacer {
+        width: 36px;
+        flex-shrink: 0;
+      }
+
+      /* ─── FLAG SCREEN ─── */
+      #flag-screen {
+        background: var(--bg);
+      }
+
+      .flag-instruction {
+        margin: 16px 20px;
+        text-align: center;
+      }
+
+      .flag-instruction p {
+        font-size: 15px;
+        color: var(--txt2);
+        line-height: 1.6;
+      }
+
+      .message-preview {
+        margin: 8px 20px;
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 16px;
+        overflow: hidden;
+      }
+
+      .msg-sender {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--txt3);
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .sender-dot {
+        width: 8px;
+        height: 8px;
+        background: #25D366;
+        border-radius: 50%;
+      }
+
+      .msg-bubble {
+        background: #DCF8C6;
+        border-radius: 4px 16px 16px 16px;
+        padding: 12px 14px;
+        font-size: 14px;
+        line-height: 1.6;
+        color: #111;
+        position: relative;
+        max-width: 90%;
+      }
+
+      .msg-bubble .link {
+        color: #2563EB;
+        text-decoration: underline;
+      }
+
+      .msg-time {
+        font-size: 11px;
+        color: #999;
+        text-align: right;
+        margin-top: 4px;
+      }
+
+      .red-flag-list {
+        margin: 12px 20px;
+        background: var(--danger-light);
+        border: 1px solid #FECACA;
+        border-radius: 16px;
+        padding: 14px 16px;
+      }
+
+      .red-flag-list h4 {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--danger);
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .red-flag-item {
+        font-size: 13px;
+        color: #7F1D1D;
+        margin-bottom: 4px;
+        display: flex;
+        gap: 8px;
+        align-items: flex-start;
+      }
+
+      .red-flag-item::before {
+        content: "•";
+        flex-shrink: 0;
+        margin-top: 1px;
+      }
+
+      .action-row {
+        margin: 16px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .btn-primary {
+        background: var(--brand);
+        color: #fff;
+        border: none;
+        border-radius: 16px;
+        padding: 16px;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        width: 100%;
+        transition: transform 0.15s, opacity 0.15s;
+        letter-spacing: -0.1px;
+      }
+
+      .btn-primary:active {
+        transform: scale(0.97);
+      }
+
+      .btn-secondary {
+        background: #fff;
+        color: var(--txt);
+        border: 1.5px solid var(--border);
+        border-radius: 16px;
+        padding: 16px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+        transition: transform 0.15s;
+      }
+
+      .btn-secondary:active {
+        transform: scale(0.97);
+      }
+
+      .btn-danger {
+        background: var(--danger);
+        color: #fff;
+        border: none;
+        border-radius: 16px;
+        padding: 16px;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        width: 100%;
+        transition: transform 0.15s;
+      }
+
+      .btn-danger:active {
+        transform: scale(0.97);
+      }
+
+      /* ─── ANALYZING SCREEN ─── */
+      #analyzing {
+        background: linear-gradient(160deg, #1E40AF, #2563EB);
+      }
+
+      #analyzing .status-bar {
+        background: transparent;
+        color: #fff;
+      }
+
+      .analyzing-body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 32px;
+        color: #fff;
+        text-align: center;
+      }
+
+      .pulse-ring {
+        position: relative;
+        width: 120px;
+        height: 120px;
+        margin-bottom: 32px;
+      }
+
+      @keyframes pulse1 {
+
+        0%,
+        100% {
+          transform: scale(1);
+          opacity: 0.6;
+        }
+
+        50% {
+          transform: scale(1.3);
+          opacity: 0;
+        }
+      }
+
+      @keyframes pulse2 {
+
+        0%,
+        100% {
+          transform: scale(1);
+          opacity: 0.4;
+        }
+
+        50% {
+          transform: scale(1.5);
+          opacity: 0;
+        }
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .pulse-ring .ring1 {
+        position: absolute;
+        inset: -20px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        animation: pulse1 2s ease-in-out infinite;
+      }
+
+      .pulse-ring .ring2 {
+        position: absolute;
+        inset: -40px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.06);
+        animation: pulse2 2s ease-in-out infinite 0.3s;
+      }
+
+      .pulse-ring .spinner {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+      }
+
+      .analyzing-body h2 {
+        font-size: 22px;
+        font-weight: 800;
+        margin-bottom: 10px;
+        letter-spacing: -0.3px;
+      }
+
+      .analyzing-body p {
+        font-size: 15px;
+        opacity: 0.8;
+        line-height: 1.6;
+        margin-bottom: 32px;
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 2px;
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: #fff;
+        border-radius: 2px;
+        animation: progress 2.5s ease-in-out forwards;
+      }
+
+      @keyframes progress {
+        0% {
+          width: 0%;
+        }
+
+        100% {
+          width: 85%;
+        }
+      }
+
+      .check-list {
+        margin-top: 28px;
+        text-align: left;
+        width: 100%;
+      }
+
+      .check-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 14px;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        opacity: 0;
+      }
+
+      .check-item.show {
+        opacity: 1;
+        transition: opacity 0.5s;
+      }
+
+      .check-icon {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        flex-shrink: 0;
+      }
+
+      .check-icon.done {
+        background: rgba(255, 255, 255, 0.9);
+        color: var(--brand);
+      }
+
+      /* ─── SCAM CONFIRMED ─── */
+      #scam-confirmed {
+        background: #fff;
+      }
+
+      .scam-hero {
+        background: linear-gradient(160deg, #7F1D1D, #DC2626);
+        padding: 60px 24px 28px;
+        text-align: center;
+        color: #fff;
+      }
+
+      .scam-icon-wrap {
+        width: 72px;
+        height: 72px;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 36px;
+        margin: 0 auto 16px;
+      }
+
+      .scam-hero h2 {
+        font-size: 24px;
+        font-weight: 800;
+        margin-bottom: 8px;
+        letter-spacing: -0.3px;
+      }
+
+      .scam-hero p {
+        font-size: 15px;
+        opacity: 0.85;
+        line-height: 1.6;
+      }
+
+      .scam-tag {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        padding: 4px 12px;
+        font-size: 12px;
+        font-weight: 700;
+        display: inline-block;
+        margin-top: 12px;
+      }
+
+      .scam-why {
+        margin: 20px;
+        background: var(--danger-light);
+        border: 1px solid #FCA5A5;
+        border-radius: 16px;
+        padding: 16px;
+      }
+
+      .scam-why h4 {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--danger);
+        margin-bottom: 10px;
+      }
+
+      .scam-why-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 8px;
+        font-size: 13px;
+        color: #7F1D1D;
+        line-height: 1.5;
+      }
+
+      .scam-why-item .num {
+        width: 20px;
+        height: 20px;
+        background: var(--danger);
+        color: #fff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 700;
+        flex-shrink: 0;
+        margin-top: 1px;
+      }
+
+      .scam-choice {
+        margin: 0 20px 8px;
+      }
+
+      .scam-choice p {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--txt);
+        margin-bottom: 12px;
+        text-align: center;
+      }
+
+      /* ─── DEBRIEF ─── */
+      #debrief-1,
+      #debrief-2,
+      #debrief-3 {
+        background: #fff;
+      }
+
+      .debrief-header {
+        background: linear-gradient(135deg, #5B21B6, #7C3AED);
+        padding: 60px 24px 28px;
+        color: #fff;
+      }
+
+      .debrief-step-dots {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 20px;
+      }
+
+      .debrief-step-dot {
+        height: 4px;
+        flex: 1;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 2px;
+      }
+
+      .debrief-step-dot.active {
+        background: #fff;
+      }
+
+      .debrief-companion {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      @keyframes breathe {
+
+        0%,
+        100% {
+          transform: scale(1);
+        }
+
+        50% {
+          transform: scale(1.08);
+        }
+      }
+
+      .companion-avatar {
+        width: 44px;
+        height: 44px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        animation: breathe 3s ease-in-out infinite;
+        flex-shrink: 0;
+      }
+
+      .companion-label {
+        font-size: 13px;
+        font-weight: 600;
+        opacity: 0.9;
+      }
+
+      .companion-sub {
+        font-size: 11px;
+        opacity: 0.65;
+      }
+
+      .debrief-header h2 {
+        font-size: 22px;
+        font-weight: 800;
+        letter-spacing: -0.3px;
+        line-height: 1.3;
+        margin-bottom: 8px;
+      }
+
+      .debrief-header p {
+        font-size: 15px;
+        opacity: 0.85;
+        line-height: 1.6;
+      }
+
+      .feeling-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin: 20px;
+      }
+
+      .feeling-chip {
+        background: var(--companion-light);
+        border: 1.5px solid transparent;
+        border-radius: 16px;
+        padding: 16px 12px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+
+      .feeling-chip:active,
+      .feeling-chip.selected {
+        border-color: var(--companion);
+        background: var(--companion-light);
+      }
+
+      .feeling-chip .feeling-emoji {
+        font-size: 28px;
+        margin-bottom: 6px;
+      }
+
+      .feeling-chip p {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--companion);
+      }
+
+      .companion-msg {
+        margin: 0 20px;
+        background: var(--companion-light);
+        border: 1px solid #DDD6FE;
+        border-radius: 16px;
+        padding: 16px;
+      }
+
+      .companion-msg p {
+        font-size: 14px;
+        color: #4C1D95;
+        line-height: 1.7;
+      }
+
+      .companion-msg strong {
+        font-weight: 700;
+      }
+
+      /* ─── DAMAGE CONTROL ─── */
+      .damage-list {
+        margin: 16px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .damage-item {
+        background: #fff;
+        border: 1.5px solid var(--border);
+        border-radius: 16px;
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .damage-item.done {
+        border-color: var(--safe);
+        background: var(--safe-light);
+      }
+
+      .damage-checkbox {
+        width: 28px;
+        height: 28px;
+        border-radius: 10px;
+        border: 2px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        transition: all 0.2s;
+        font-size: 14px;
+      }
+
+      .damage-item.done .damage-checkbox {
+        border-color: var(--safe);
+        background: var(--safe);
+        color: #fff;
+      }
+
+      .damage-item-text h4 {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--txt);
+        margin-bottom: 2px;
+      }
+
+      .damage-item-text p {
+        font-size: 12px;
+        color: var(--txt2);
+        line-height: 1.4;
+      }
+
+      .damage-item.done .damage-item-text h4 {
+        color: var(--safe);
+      }
+
+      .damage-urgency {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--danger);
+        background: var(--danger-light);
+        border-radius: 6px;
+        padding: 2px 6px;
+        margin-top: 4px;
+        display: inline-block;
+      }
+
+      .damage-urgency.med {
+        color: var(--warning);
+        background: var(--warning-light);
+      }
+
+      /* ─── REPORT ─── */
+      .report-card {
+        margin: 16px 20px;
+        background: #fff;
+        border: 1.5px solid var(--border);
+        border-radius: 20px;
+        overflow: hidden;
+      }
+
+      .report-header {
+        background: var(--bg);
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .report-header h4 {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--txt2);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .report-field {
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+      }
+
+      .report-field:last-child {
+        border-bottom: none;
+      }
+
+      .report-field label {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--txt3);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .report-field span {
+        font-size: 14px;
+        color: var(--txt);
+      }
+
+      .report-field span.highlight {
+        color: var(--danger);
+        font-weight: 600;
+      }
+
+      .auto-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: var(--brand-light);
+        color: var(--brand);
+        font-size: 11px;
+        font-weight: 600;
+        border-radius: 8px;
+        padding: 3px 8px;
+        margin-bottom: 12px;
+      }
+
+      /* ─── FAMILY ALERT ─── */
+      #family-alert {
+        background: var(--bg);
+      }
+
+      .alert-card {
+        margin: 16px 20px;
+        background: #fff;
+        border: 2px solid #FCA5A5;
+        border-radius: 20px;
+        overflow: hidden;
+      }
+
+      .alert-card-top {
+        background: var(--danger-light);
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border-bottom: 1px solid #FCA5A5;
+      }
+
+      .alert-circle {
+        width: 44px;
+        height: 44px;
+        background: var(--danger);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        flex-shrink: 0;
+      }
+
+      .alert-card-top h4 {
+        font-size: 15px;
+        font-weight: 700;
+        color: #7F1D1D;
+        line-height: 1.3;
+      }
+
+      .alert-card-top p {
+        font-size: 13px;
+        color: #991B1B;
+      }
+
+      .alert-details {
+        padding: 14px 16px;
+      }
+
+      .alert-detail-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--border);
+        font-size: 14px;
+      }
+
+      .alert-detail-row:last-child {
+        border-bottom: none;
+      }
+
+      .alert-detail-row label {
+        color: var(--txt3);
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      .alert-detail-row span {
+        font-weight: 600;
+        color: var(--txt);
+      }
+
+      .privacy-note {
+        margin: 0 20px 12px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 14px;
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+      }
+
+      .privacy-note p {
+        font-size: 13px;
+        color: var(--txt2);
+        line-height: 1.5;
+      }
+
+      .privacy-icon {
+        font-size: 18px;
+        flex-shrink: 0;
+      }
+
+      .safety-tip-card {
+        margin: 0 20px;
+        background: var(--warning-light);
+        border: 1px solid #FDE68A;
+        border-radius: 16px;
+        padding: 16px;
+      }
+
+      .safety-tip-card h4 {
+        font-size: 14px;
+        font-weight: 700;
+        color: #78350F;
+        margin-bottom: 6px;
+      }
+
+      .safety-tip-card p {
+        font-size: 13px;
+        color: #92400E;
+        line-height: 1.6;
+      }
+
+      /* ─── PARENT DASHBOARD ─── */
+      #parent-home {
+        background: var(--bg);
+      }
+
+      .parent-header {
+        background: linear-gradient(135deg, #1E3A8A, #1E40AF);
+        padding: 60px 24px 24px;
+        color: #fff;
+      }
+
+      .parent-header .greeting {
+        font-size: 13px;
+        opacity: 0.75;
+        margin-bottom: 4px;
+      }
+
+      .parent-header h2 {
+        font-size: 24px;
+        font-weight: 800;
+        letter-spacing: -0.3px;
+        margin-bottom: 16px;
+      }
+
+      .score-pill {
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        border-radius: 20px;
+        padding: 10px 18px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .score-number {
+        font-size: 28px;
+        font-weight: 900;
+        letter-spacing: -0.5px;
+      }
+
+      .score-label {
+        font-size: 13px;
+        opacity: 0.85;
+        line-height: 1.3;
+      }
+
+      .score-trend {
+        margin-left: auto;
+        font-size: 12px;
+        background: rgba(22, 163, 74, 0.3);
+        color: #6EE7B7;
+        border-radius: 20px;
+        padding: 4px 10px;
+        font-weight: 600;
+      }
+
+      .family-grid {
+        padding: 16px 20px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      .family-member {
+        background: #fff;
+        border: 1.5px solid var(--border);
+        border-radius: 16px;
+        padding: 16px;
+        text-align: center;
+        cursor: pointer;
+        transition: transform 0.15s;
+      }
+
+      .family-member:active {
+        transform: scale(0.96);
+      }
+
+      .family-member.alert {
+        border-color: #FCA5A5;
+        background: var(--danger-light);
+      }
+
+      .member-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        margin: 0 auto 10px;
+        background: var(--bg);
+      }
+
+      .member-name {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--txt);
+        margin-bottom: 4px;
+      }
+
+      .member-status {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--safe);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+      }
+
+      .member-status.alert {
+        color: var(--danger);
+      }
+
+      .status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+      }
+
+      .activity-item {
+        margin: 0 20px 10px;
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 14px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .activity-dot {
+        width: 36px;
+        height: 36px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
+      }
+
+      .activity-dot.warn {
+        background: var(--danger-light);
+      }
+
+      .activity-dot.safe {
+        background: var(--safe-light);
+      }
+
+      .activity-dot.info {
+        background: var(--brand-light);
+      }
+
+      .activity-text {
+        flex: 1;
+      }
+
+      .activity-text p {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--txt);
+        line-height: 1.4;
+      }
+
+      .activity-text span {
+        font-size: 12px;
+        color: var(--txt3);
+      }
+
+      .activity-badge {
+        font-size: 11px;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 8px;
+      }
+
+      .activity-badge.scam {
+        background: var(--danger-light);
+        color: var(--danger);
+      }
+
+      .activity-badge.safe {
+        background: var(--safe-light);
+        color: var(--safe);
+      }
+
+      .activity-badge.info {
+        background: var(--brand-light);
+        color: var(--brand);
+      }
+
+      /* ─── STUDENT HOME ─── */
+      #student-home {
+        background: var(--bg);
+      }
+
+      .student-header {
+        background: linear-gradient(135deg, #5B21B6, #7C3AED);
+        padding: 60px 24px 24px;
+        color: #fff;
+      }
+
+      .student-header .greeting {
+        font-size: 13px;
+        opacity: 0.75;
+        margin-bottom: 4px;
+      }
+
+      .student-header h2 {
+        font-size: 24px;
+        font-weight: 800;
+        letter-spacing: -0.3px;
+      }
+
+      .streak-bar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 14px;
+        background: rgba(255, 255, 255, 0.12);
+        border-radius: 16px;
+        padding: 12px 16px;
+      }
+
+      .streak-emoji {
+        font-size: 24px;
+      }
+
+      .streak-text {
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .streak-sub {
+        font-size: 12px;
+        opacity: 0.75;
+      }
+
+      .streak-count {
+        margin-left: auto;
+        font-size: 26px;
+        font-weight: 900;
+        letter-spacing: -0.5px;
+      }
+
+      .quiz-card {
+        margin: 16px 20px;
+        background: #fff;
+        border: 1.5px solid var(--border);
+        border-radius: 20px;
+        overflow: hidden;
+      }
+
+      .quiz-top {
+        padding: 16px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .quiz-top h4 {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--txt);
+      }
+
+      .quiz-badge {
+        font-size: 11px;
+        font-weight: 700;
+        background: var(--companion-light);
+        color: var(--companion);
+        border-radius: 8px;
+        padding: 4px 10px;
+      }
+
+      .quiz-q {
+        padding: 16px;
+        font-size: 15px;
+        font-weight: 500;
+        color: var(--txt);
+        line-height: 1.6;
+      }
+
+      .quiz-opts {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 0 16px 16px;
+      }
+
+      .quiz-opt {
+        border: 1.5px solid var(--border);
+        border-radius: 14px;
+        padding: 13px 14px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.15s;
+        color: var(--txt);
+      }
+
+      .quiz-opt:active {
+        background: var(--companion-light);
+        border-color: var(--companion);
+      }
+
+      .quiz-opt.correct {
+        border-color: var(--safe);
+        background: var(--safe-light);
+        color: #166534;
+      }
+
+      .quiz-opt.wrong {
+        border-color: var(--danger);
+        background: var(--danger-light);
+        color: #7F1D1D;
+      }
+
+      .resources-section {
+        padding: 8px 20px 20px;
+      }
+
+      .resource-card {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 14px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 10px;
+        cursor: pointer;
+      }
+
+      .resource-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        flex-shrink: 0;
+      }
+
+      .resource-text h4 {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--txt);
+        margin-bottom: 2px;
+      }
+
+      .resource-text p {
+        font-size: 12px;
+        color: var(--txt2);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="prototype-label">SafeCircle — Interactive Prototype</div>
+
+    <div class="phone">
+      <div class="phone-inner">
+
+        <!-- STATUS BAR -->
+        <div class="status-bar" id="status-bar">
+          <span>9:41</span>
+          <div class="notch">
+            <div class="notch-island"></div>
+          </div>
+          <div class="status-icons">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <rect x="1" y="7" width="3" height="10" rx="1" />
+              <rect x="6" y="5" width="3" height="12" rx="1" />
+              <rect x="11" y="3" width="3" height="14" rx="1" />
+              <rect x="16" y="1" width="3" height="16" rx="1" opacity="0.3" />
+            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12.55a11 11 0 0 1 14.08 0" />
+              <path d="M1.42 9a16 16 0 0 1 21.16 0" />
+              <path d="M8.53 16.11a6 6 0 0 1 6.95 0" />
+              <circle cx="12" cy="20" r="1" fill="currentColor" />
+            </svg>
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <rect x="2" y="7" width="18" height="11" rx="2" opacity="0.3" />
+              <rect x="2" y="7" width="14" height="11" rx="2" />
+              <path d="M22 11v3" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════ SCREENS ═══════════════════════════════ -->
+
+        <!-- ROLE SELECT -->
+        <div class="screen active" id="role-select">
+          <div class="role-hero">
+            <div class="eyebrow">Welcome to</div>
+            <div class="role-logo">
+              <svg viewBox="0 0 40 40" fill="none">
+                <circle cx="20" cy="20" r="20" fill="rgba(255,255,255,0.15)" />
+                <circle cx="20" cy="20" r="14" fill="rgba(255,255,255,0.15)" />
+                <circle cx="20" cy="20" r="8" fill="rgba(255,255,255,0.9)" />
+              </svg>
+              <span>SafeCircle</span>
+            </div>
+            <p>Your family's AI-powered scam protection. Choose who you are to get started.</p>
+          </div>
+          <div class="role-cards">
+            <div class="role-card" onclick="goTo('parent-home')">
+              <div class="role-icon parent">👨‍👩‍👧</div>
+              <div class="role-card-text">
+                <h3>Parent / Guardian</h3>
+                <p>Monitor your family's safety and get alerts when scams are detected</p>
+              </div>
+              <div class="role-card-arrow">›</div>
+            </div>
+            <div class="role-card" onclick="goTo('student-home')">
+              <div class="role-icon student">🎓</div>
+              <div class="role-card-text">
+                <h3>Student</h3>
+                <p>Learn to spot scams with daily quizzes and challenges</p>
+              </div>
+              <div class="role-card-arrow">›</div>
+            </div>
+            <div class="role-card" onclick="goTo('senior-home')">
+              <div class="role-icon senior">👴</div>
+              <div class="role-card-text">
+                <h3>Senior</h3>
+                <p>Simple, big-button interface — just tap to check if something is safe</p>
+              </div>
+              <div class="role-card-arrow">›</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SENIOR HOME -->
+        <div class="screen" id="senior-home">
+          <div class="senior-header">
+            <div class="senior-greeting">Good morning,</div>
+            <div class="senior-name" style="font-size:30px">Puan Rohani 👋</div>
+            <div class="senior-safe-badge">✅ Your circle is safe today</div>
+          </div>
+          <button class="big-safe-btn" onclick="goTo('flag-screen')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
+            </svg>
+            Is this message safe?
+          </button>
+          <div class="section-label">Today's scam tip</div>
+          <div class="tip-card" style="margin-bottom:16px;">
+            <div class="tip-icon">💡</div>
+            <div class="tip-card-text">
+              <h4>Banks never ask for your TAC via WhatsApp</h4>
+              <p>If anyone messages asking for your TAC, PIN, or password — it is always a scam. Hang up or close the
+                chat.</p>
+            </div>
+          </div>
+          <div class="section-label">Recent checks</div>
+          <div class="recent-flag">
+            <div class="flag-dot"></div>
+            <div class="recent-flag-text">Maybank promotion link</div>
+            <div class="recent-flag-time">Safe · 2d ago</div>
+          </div>
+          <div class="recent-flag">
+            <div class="flag-dot warn"></div>
+            <div class="recent-flag-text">LHDN refund message</div>
+            <div class="recent-flag-time">⚠️ Scam · 5d ago</div>
+          </div>
+          <div class="bottom-nav">
+            <div class="bottom-nav-item active"><svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+              </svg><span>Home</span></div>
+            <div class="bottom-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 8v4M12 16h.01" />
+              </svg><span>Help</span></div>
+            <div class="bottom-nav-item" onclick="goTo('role-select')"><svg viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="8" r="4" />
+                <path d="M6 20v-2a6 6 0 0 1 12 0v2" />
+              </svg><span>Profile</span></div>
+          </div>
+        </div>
+
+        <!-- FLAG SCREEN -->
+        <div class="screen" id="flag-screen">
+          <div style="background:var(--bg);">
+            <div class="top-nav">
+              <div class="back-btn" onclick="back()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M15 18l-6-6 6-6" />
+                </svg>
+              </div>
+              <h2>Check this message</h2>
+              <div class="top-nav-spacer"></div>
+            </div>
+          </div>
+          <div class="screen-body">
+            <div class="flag-instruction">
+              <p>SafeCircle found a message that looks suspicious. Here's what we detected:</p>
+            </div>
+            <div class="message-preview">
+              <div class="msg-sender">
+                <div class="sender-dot"></div>+60 11-XXXX 4421 (Unknown)
+              </div>
+              <div class="msg-bubble">
+                🚨 URGENT: Your Maybank account has been SUSPENDED. Verify now to avoid permanent closure:<br>
+                <span class="link">maybank-secure-verify.com/login</span><br>
+                Failure to verify within 2 hours will result in full account suspension.
+                <div class="msg-time">3:47 PM ✓✓</div>
+              </div>
+            </div>
+            <div class="red-flag-list" style="margin-top:12px;">
+              <h4>🚩 Red flags detected</h4>
+              <div class="red-flag-item">Fake urgency — "2 hours" pressure tactic</div>
+              <div class="red-flag-item">Suspicious link — not the real maybank2u.com</div>
+              <div class="red-flag-item">Impersonating Maybank official</div>
+              <div class="red-flag-item">Unknown sender number</div>
+            </div>
+            <div class="action-row">
+              <button class="btn-primary" onclick="goTo('analyzing')">Yes, check this for me</button>
+              <button class="btn-secondary" onclick="back()">It looks fine, go back</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ANALYZING -->
+        <div class="screen" id="analyzing" style="background:linear-gradient(160deg,#1E3A8A,#1E40AF);">
+          <div class="status-bar" style="background:transparent;color:#fff;">
+            <span>9:41</span>
+            <div style="width:126px;height:34px;"></div>
+            <div class="status-icons" style="color:#fff;">
+              <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                <rect x="1" y="7" width="3" height="10" rx="1" />
+                <rect x="6" y="5" width="3" height="12" rx="1" />
+                <rect x="11" y="3" width="3" height="14" rx="1" />
+              </svg>
+            </div>
+          </div>
+          <div class="analyzing-body">
+            <div class="pulse-ring">
+              <div class="ring2"></div>
+              <div class="ring1"></div>
+              <div class="spinner">🛡️</div>
+            </div>
+            <h2>Checking your message…</h2>
+            <p>SafeCircle's AI is analysing the sender, link, and message patterns against known scam databases.</p>
+            <div class="progress-bar">
+              <div class="progress-fill"></div>
+            </div>
+            <div class="check-list">
+              <div class="check-item show" id="c1">
+                <div class="check-icon done">✓</div> Sender number verified
+              </div>
+              <div class="check-item show" id="c2">
+                <div class="check-icon done">✓</div> URL cross-checked
+              </div>
+              <div class="check-item" id="c3" style="opacity:0.4">
+                <div class="check-icon">···</div> Pattern analysis complete
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SCAM CONFIRMED -->
+        <div class="screen" id="scam-confirmed">
+          <div class="scam-hero">
+            <div class="scam-icon-wrap">⚠️</div>
+            <h2>This is a scam</h2>
+            <p>This message is a well-known Maybank impersonation phishing attempt. Do not click any links or reply.</p>
+            <div class="scam-tag">Confidence: 98% scam</div>
+          </div>
+          <div class="screen-body">
+            <div class="scam-why">
+              <h4>Why we flagged this</h4>
+              <div class="scam-why-item">
+                <div class="num">1</div>The link "maybank-secure-verify.com" is not Maybank's real domain
+                (maybank2u.com)
+              </div>
+              <div class="scam-why-item">
+                <div class="num">2</div>Real banks never threaten account closure via SMS/WhatsApp
+              </div>
+              <div class="scam-why-item">
+                <div class="num">3</div>This exact message pattern has been reported 847 times this month
+              </div>
+            </div>
+            <div class="scam-choice">
+              <p>What happened?</p>
+              <div class="action-row" style="margin:0;">
+                <button class="btn-danger" onclick="goTo('debrief-1')">I already clicked the link</button>
+                <button class="btn-secondary" onclick="goTo('family-alert')">I haven't responded yet</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DEBRIEF STEP 1 — VALIDATE -->
+        <div class="screen" id="debrief-1">
+          <div class="debrief-header">
+            <div class="debrief-step-dots">
+              <div class="debrief-step-dot active"></div>
+              <div class="debrief-step-dot"></div>
+              <div class="debrief-step-dot"></div>
+            </div>
+            <div class="debrief-companion">
+              <div class="companion-avatar">🤗</div>
+              <div>
+                <div class="companion-label">SafeCircle Companion</div>
+                <div class="companion-sub">Here to help, one step at a time</div>
+              </div>
+            </div>
+            <h2>First — how are you feeling right now?</h2>
+            <p>There's no wrong answer. What you're feeling is completely normal.</p>
+          </div>
+          <div class="screen-body">
+            <div class="feeling-grid">
+              <div class="feeling-chip" onclick="selectFeeling(this,'debrief-2')">
+                <div class="feeling-emoji">😨</div>
+                <p>Scared</p>
+              </div>
+              <div class="feeling-chip" onclick="selectFeeling(this,'debrief-2')">
+                <div class="feeling-emoji">😤</div>
+                <p>Angry</p>
+              </div>
+              <div class="feeling-chip" onclick="selectFeeling(this,'debrief-2')">
+                <div class="feeling-emoji">😳</div>
+                <p>Embarrassed</p>
+              </div>
+              <div class="feeling-chip" onclick="selectFeeling(this,'debrief-2')">
+                <div class="feeling-emoji">😕</div>
+                <p>Confused</p>
+              </div>
+            </div>
+            <div class="companion-msg">
+              <p>It's okay, Puan Rohani. <strong>This is not your fault.</strong> These scammers are professionals —
+                they trick thousands of people every day. You did the right thing by checking with SafeCircle. Let's fix
+                this together. 💪</p>
+            </div>
+            <div class="action-row">
+              <button class="btn-primary" onclick="goTo('debrief-2')" style="background:var(--companion);">I'm ready —
+                what do I do next?</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- DEBRIEF STEP 2 — DAMAGE CONTROL -->
+        <div class="screen" id="debrief-2">
+          <div class="debrief-header">
+            <div class="debrief-step-dots">
+              <div class="debrief-step-dot"></div>
+              <div class="debrief-step-dot active"></div>
+              <div class="debrief-step-dot"></div>
+            </div>
+            <div class="debrief-companion">
+              <div class="companion-avatar">🛡️</div>
+              <div>
+                <div class="companion-label">SafeCircle Companion</div>
+                <div class="companion-sub">Let's protect you right now</div>
+              </div>
+            </div>
+            <h2>Do these steps — tick each one as you go</h2>
+            <p>Act quickly — the sooner we do this, the better we can protect your account.</p>
+          </div>
+          <div class="screen-body">
+            <div class="damage-list">
+              <div class="damage-item" id="d1" onclick="toggleDamage('d1')">
+                <div class="damage-checkbox">1</div>
+                <div class="damage-item-text">
+                  <h4>Freeze your Maybank card now</h4>
+                  <p>Open Maybank2u app → More → Manage Card → Freeze Card</p>
+                  <div class="damage-urgency">Do this first</div>
+                </div>
+              </div>
+              <div class="damage-item" id="d2" onclick="toggleDamage('d2')">
+                <div class="damage-checkbox">2</div>
+                <div class="damage-item-text">
+                  <h4>Change your Maybank password</h4>
+                  <p>Settings → Security → Change Password. Make it something new.</p>
+                  <div class="damage-urgency">Do this second</div>
+                </div>
+              </div>
+              <div class="damage-item" id="d3" onclick="toggleDamage('d3')">
+                <div class="damage-checkbox">3</div>
+                <div class="damage-item-text">
+                  <h4>Take a screenshot of the message</h4>
+                  <p>Press Volume Down + Side button at the same time. Keep this as evidence.</p>
+                  <div class="damage-urgency med">For the report</div>
+                </div>
+              </div>
+              <div class="damage-item" id="d4" onclick="toggleDamage('d4')">
+                <div class="damage-checkbox">4</div>
+                <div class="damage-item-text">
+                  <h4>Call Maybank fraud line</h4>
+                  <p>1300 88 6688 — Tell them you clicked a phishing link</p>
+                  <div class="damage-urgency med">Important</div>
+                </div>
+              </div>
+            </div>
+            <div class="action-row" style="margin-top:4px;">
+              <button class="btn-primary" onclick="goTo('debrief-3')" style="background:var(--companion);">I've done the
+                steps — what's next?</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- DEBRIEF STEP 3 — REPORT -->
+        <div class="screen" id="debrief-3">
+          <div class="debrief-header" style="background:linear-gradient(135deg,#065F46,#059669);">
+            <div class="debrief-step-dots">
+              <div class="debrief-step-dot"></div>
+              <div class="debrief-step-dot"></div>
+              <div class="debrief-step-dot active"></div>
+            </div>
+            <div class="debrief-companion">
+              <div class="companion-avatar">📋</div>
+              <div>
+                <div class="companion-label">Almost done!</div>
+                <div class="companion-sub">File a report to help others</div>
+              </div>
+            </div>
+            <h2>Your report is ready to send</h2>
+            <p>We've filled in everything from your conversation. Just review and tap send.</p>
+          </div>
+          <div class="screen-body">
+            <div class="auto-tag" style="margin:16px 20px 0;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+              </svg>
+              Auto-filled by SafeCircle AI
+            </div>
+            <div class="report-card">
+              <div class="report-header">
+                <h4>CCID Report — Cyber Crime</h4>
+              </div>
+              <div class="report-field"><label>Victim name</label><span>Puan Rohani binti Hassan</span></div>
+              <div class="report-field"><label>Scam type</label><span class="highlight">Phishing — Bank
+                  impersonation</span></div>
+              <div class="report-field"><label>Platform</label><span>WhatsApp SMS</span></div>
+              <div class="report-field"><label>Scam link detected</label><span
+                  class="highlight">maybank-secure-verify.com</span></div>
+              <div class="report-field"><label>Sender number</label><span>+60 11-XXXX 4421</span></div>
+              <div class="report-field"><label>Date &amp; time</label><span>17 Jun 2026, 3:47 PM</span></div>
+              <div class="report-field"><label>Actions taken</label><span>Card frozen, password changed</span></div>
+            </div>
+            <div class="action-row">
+              <button class="btn-primary" onclick="goTo('family-alert')" style="background:var(--safe);">Send to CCID
+                &amp; Maybank ✓</button>
+              <button class="btn-secondary">Review before sending</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- FAMILY ALERT -->
+        <div class="screen" id="family-alert">
+          <div style="background:var(--bg);">
+            <div class="top-nav">
+              <div class="back-btn" onclick="back()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M15 18l-6-6 6-6" />
+                </svg>
+              </div>
+              <h2>Family alert sent</h2>
+              <div class="top-nav-spacer"></div>
+            </div>
+          </div>
+          <div class="screen-body">
+            <div
+              style="margin:8px 20px 12px;background:var(--safe-light);border:1px solid #86EFAC;border-radius:14px;padding:14px;display:flex;gap:10px;align-items:center;">
+              <span style="font-size:20px;">✅</span>
+              <p style="font-size:14px;color:#166534;font-weight:500;line-height:1.4;">Your family has been warned —
+                they won't fall for the same scam.</p>
+            </div>
+            <div class="alert-card">
+              <div class="alert-card-top">
+                <div class="alert-circle">🔔</div>
+                <div>
+                  <h4>Scam targeting Maybank detected in your circle</h4>
+                  <p>Shared to 3 family members</p>
+                </div>
+              </div>
+              <div class="alert-details">
+                <div class="alert-detail-row"><label>Scam type</label><span>Maybank phishing</span></div>
+                <div class="alert-detail-row"><label>Platform</label><span>WhatsApp SMS</span></div>
+                <div class="alert-detail-row"><label>Reported</label><span>Just now</span></div>
+              </div>
+            </div>
+            <div class="privacy-note">
+              <div class="privacy-icon">🔒</div>
+              <p><strong>Private by design:</strong> Your family only sees what type of scam was detected — never your
+                personal details or conversation. The AI handled everything for you.</p>
+            </div>
+            <div class="safety-tip-card">
+              <h4>What your family saw</h4>
+              <p>"⚠️ A scam targeting Maybank was just flagged in your SafeCircle. If you receive a message from an
+                unknown number about your Maybank account — do not click any links."</p>
+            </div>
+            <div class="action-row">
+              <button class="btn-primary" onclick="goTo('parent-home')">See family dashboard</button>
+              <button class="btn-secondary" onclick="goTo('senior-home')">Back to home</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- PARENT DASHBOARD -->
+        <div class="screen" id="parent-home">
+          <div class="parent-header">
+            <div class="greeting">Good morning,</div>
+            <h2>Ahmad Faizal 👨‍👩‍👧</h2>
+            <div class="score-pill">
+              <div>
+                <div class="score-number">92</div>
+                <div class="score-label">Protection<br>score</div>
+              </div>
+              <div class="score-trend">↑ +4 this week</div>
+            </div>
+          </div>
+          <div class="screen-body">
+            <div class="section-label">Your family</div>
+            <div class="family-grid">
+              <div class="family-member" onclick="goTo('family-alert')">
+                <div class="member-avatar">👴</div>
+                <div class="member-name">Puan Rohani</div>
+                <div class="member-status alert">
+                  <div class="status-dot"></div>Alert · Scam detected
+                </div>
+              </div>
+              <div class="family-member">
+                <div class="member-avatar">👩</div>
+                <div class="member-name">Puan Siti</div>
+                <div class="member-status">
+                  <div class="status-dot"></div>Safe
+                </div>
+              </div>
+              <div class="family-member">
+                <div class="member-avatar">🎓</div>
+                <div class="member-name">Amirul (student)</div>
+                <div class="member-status">
+                  <div class="status-dot"></div>Safe · 5-day streak
+                </div>
+              </div>
+              <div class="family-member">
+                <div class="member-avatar">👨</div>
+                <div class="member-name">Pak Hamid</div>
+                <div class="member-status">
+                  <div class="status-dot"></div>Safe
+                </div>
+              </div>
+            </div>
+            <div class="section-label">Recent activity</div>
+            <div class="activity-item">
+              <div class="activity-dot warn">⚠️</div>
+              <div class="activity-text">
+                <p>Scam detected — Puan Rohani</p>
+                <span>Maybank phishing · Just now</span>
+              </div>
+              <div class="activity-badge scam">Scam</div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot safe">✅</div>
+              <div class="activity-text">
+                <p>Message checked safe — Puan Siti</p>
+                <span>Shopee promo link · 2h ago</span>
+              </div>
+              <div class="activity-badge safe">Safe</div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot info">📚</div>
+              <div class="activity-text">
+                <p>Quiz completed — Amirul</p>
+                <span>Phishing awareness · 5h ago</span>
+              </div>
+              <div class="activity-badge info">+20 pts</div>
+            </div>
+            <div class="action-row" style="margin-top:8px;">
+              <button class="btn-secondary" onclick="goTo('role-select')">Switch role</button>
+            </div>
+          </div>
+          <div class="bottom-nav">
+            <div class="bottom-nav-item active"><svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+              </svg><span>Dashboard</span></div>
+            <div class="bottom-nav-item" onclick="goTo('family-alert')"><svg viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" width="22" height="22">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+              </svg><span>Alerts</span></div>
+            <div class="bottom-nav-item" onclick="goTo('role-select')"><svg viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" width="22" height="22">
+                <circle cx="12" cy="8" r="4" />
+                <path d="M6 20v-2a6 6 0 0 1 12 0v2" />
+              </svg><span>Profile</span></div>
+          </div>
+        </div>
+
+        <!-- STUDENT HOME -->
+        <div class="screen" id="student-home">
+          <div class="student-header">
+            <div class="greeting">Hey,</div>
+            <h2>Amirul 🎓</h2>
+            <div class="streak-bar">
+              <div class="streak-emoji">🔥</div>
+              <div>
+                <div class="streak-text">Scam-buster streak</div>
+                <div class="streak-sub">Keep it going!</div>
+              </div>
+              <div class="streak-count">5</div>
+            </div>
+          </div>
+          <div class="screen-body">
+            <div class="section-label">Today's quiz</div>
+            <div class="quiz-card">
+              <div class="quiz-top">
+                <h4>Daily challenge</h4>
+                <div class="quiz-badge">+20 pts</div>
+              </div>
+              <div class="quiz-q">You get a Telegram message saying you won RM500 from a contest you never entered. The
+                sender asks for your IC number to "process the prize." What should you do?</div>
+              <div class="quiz-opts">
+                <div class="quiz-opt" onclick="answerQuiz(this,false)">Provide your IC — it's just for verification
+                </div>
+                <div class="quiz-opt" onclick="answerQuiz(this,true)">It's a scam — block and report the sender</div>
+                <div class="quiz-opt" onclick="answerQuiz(this,false)">Ask for more details first before deciding</div>
+              </div>
+            </div>
+            <div class="section-label">Scam-buster resources</div>
+            <div class="resources-section">
+              <div class="resource-card">
+                <div class="resource-icon" style="background:#FEF3C7;">🎮</div>
+                <div class="resource-text">
+                  <h4>Spot the Scam — game</h4>
+                  <p>Identify 10 fake messages before the timer runs out</p>
+                </div>
+              </div>
+              <div class="resource-card">
+                <div class="resource-icon" style="background:#EFF6FF;">📹</div>
+                <div class="resource-text">
+                  <h4>Top 5 scams in Malaysia 2026</h4>
+                  <p>3-min explainer video</p>
+                </div>
+              </div>
+              <div class="resource-card" onclick="goTo('role-select')">
+                <div class="resource-icon" style="background:#F5F3FF;">🔄</div>
+                <div class="resource-text">
+                  <h4>Switch role</h4>
+                  <p>View parent dashboard or senior view</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="bottom-nav">
+            <div class="bottom-nav-item active"><svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+              </svg><span>Home</span></div>
+            <div class="bottom-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                width="22" height="22">
+                <path d="M12 20h9" />
+                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+              </svg><span>Quizzes</span></div>
+            <div class="bottom-nav-item" onclick="goTo('role-select')"><svg viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" width="22" height="22">
+                <circle cx="12" cy="8" r="4" />
+                <path d="M6 20v-2a6 6 0 0 1 12 0v2" />
+              </svg><span>Profile</span></div>
+          </div>
+        </div>
+
+      </div><!-- /phone-inner -->
+    </div><!-- /phone -->
+
+    <div class="screen-label" id="nav-hint">Tap a role to begin · All screens are interactive</div>
+
+    <script>
+      const history = [];
+      let current = 'role-select';
+
+      const labels = {
+        'role-select': 'Role selection screen',
+        'senior-home': 'Senior home view',
+        'flag-screen': 'Message flag flow',
+        'analyzing': 'AI triage — analysing',
+        'scam-confirmed': 'Scam confirmed result',
+        'debrief-1': 'Debrief Companion — Step 1 of 3',
+        'debrief-2': 'Debrief Companion — Step 2 of 3',
+        'debrief-3': 'Debrief Companion — Step 3 of 3',
+        'family-alert': 'Family alert sent',
+        'parent-home': 'Parent dashboard',
+        'student-home': 'Student home view'
+      };
+
+      function goTo(id) {
+        const prev = document.getElementById(current);
+        const next = document.getElementById(id);
+        if (!next || id === current) return;
+
+        history.push(current);
+        prev.classList.remove('active');
+        prev.classList.add('prev');
+        next.classList.remove('prev');
+        next.classList.add('active');
+        current = id;
+
+        document.getElementById('nav-hint').textContent = labels[id] || id;
+
+        if (id === 'analyzing') {
+          setTimeout(() => {
+            document.getElementById('c3') && document.getElementById('c3').classList.add('show');
+            document.getElementById('c3') && (document.getElementById('c3').querySelector('.check-icon').className = 'check-icon done');
+            document.getElementById('c3') && (document.getElementById('c3').querySelector('.check-icon').textContent = '✓');
+          }, 1500);
+          setTimeout(() => goTo('scam-confirmed'), 3000);
+        }
+
+        setTimeout(() => { prev.classList.remove('prev'); }, 400);
+      }
+
+      function back() {
+        if (history.length === 0) return goTo('role-select');
+        const prev = history.pop();
+        const curr = document.getElementById(current);
+        const prevEl = document.getElementById(prev);
+        curr.classList.remove('active');
+        prevEl.classList.remove('prev');
+        prevEl.classList.add('active');
+        current = prev;
+        document.getElementById('nav-hint').textContent = labels[prev] || prev;
+        setTimeout(() => curr.classList.add('prev'), 10);
+        setTimeout(() => curr.classList.remove('prev'), 400);
+      }
+
+      function selectFeeling(el, next) {
+        document.querySelectorAll('.feeling-chip').forEach(c => c.classList.remove('selected'));
+        el.classList.add('selected');
+        setTimeout(() => goTo(next), 400);
+      }
+
+      function toggleDamage(id) {
+        const el = document.getElementById(id);
+        if (el.classList.contains('done')) {
+          el.classList.remove('done');
+          el.querySelector('.damage-checkbox').textContent = id.replace('d', '');
+        } else {
+          el.classList.add('done');
+          el.querySelector('.damage-checkbox').textContent = '✓';
+        }
+      }
+
+      function answerQuiz(el, correct) {
+        document.querySelectorAll('.quiz-opt').forEach(o => {
+          o.style.pointerEvents = 'none';
+          o.style.opacity = '0.6';
+        });
+        el.style.opacity = '1';
+        el.classList.add(correct ? 'correct' : 'wrong');
+        if (!correct) {
+          document.querySelectorAll('.quiz-opt')[1].classList.add('correct');
+          document.querySelectorAll('.quiz-opt')[1].style.opacity = '1';
+        }
+      }
+    </script>
+  </body>
+
+  </html>
+  HTMLEOF
+  echo "Done"
+  Output
+
+  Done

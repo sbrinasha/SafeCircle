@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeCircle - View Report</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Tailwind Config for Custom Colors -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'orange-pastel': '#FFD4B3',
+                        'orange-accent': '#FF8C42',
+                        'orange-dark': '#FF6B35',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles/style.css">
+
+    <!-- Navbar Script -->
+    <script src="script/navbar.js"></script>
+</head>
+
+<body
+    class="bg-gradient-to-br from-orange-pastel via-orange-100 to-white min-h-screen flex items-center justify-center md:py-5 p-0">
+
+    <div class="main-container">
+        <!-- Card Container -->
+        <div class="app-shell pb-24">
+
+            <!-- Header -->
+            <div
+                class="bg-gradient-to-r from-orange-accent to-orange-dark text-white rounded-b-2xl p-6 space-y-1 -mx-6 sm:-mx-8 px-6 sm:px-8">
+                <h1 class="text-2xl font-bold">Case Details</h1>
+                <p class="text-sm text-orange-100">View full case information and status</p>
+            </div>
+
+            <!-- Case Summary -->
+            <div class="space-y-4">
+                <!-- Case ID & Status -->
+                <div class="bg-white rounded-2xl p-4 border border-gray-200 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs text-gray-500 mb-1">Case ID</p>
+                            <p class="text-lg font-bold text-gray-900">SC-2026-145892</p>
+                        </div>
+                        <span class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-3 py-1.5 rounded-full">In
+                            Progress</span>
+                    </div>
+                    <div class="pt-3 border-t border-gray-200">
+                        <p class="text-xs text-gray-500 mb-1">Opened</p>
+                        <p class="text-sm text-gray-900">Jun 27, 2026 at 2:45 PM</p>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="bg-white rounded-2xl p-4 border border-gray-200 space-y-2">
+                    <p class="text-sm font-semibold text-gray-900">What Happened</p>
+                    <p class="text-sm text-gray-700">I received a call claiming to be from my bank asking to verify my
+                        account details. After providing information, unauthorized transactions appeared on my account.
+                    </p>
+                </div>
+
+                <!-- Bank Information -->
+                <div class="bg-white rounded-2xl p-4 border border-gray-200 space-y-3">
+                    <p class="text-sm font-semibold text-gray-900">Bank Information</p>
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-gray-500">Bank Name</span>
+                            <span class="text-sm font-semibold text-gray-900">RHB Bank</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-gray-500">Account Type</span>
+                            <span class="text-sm font-semibold text-gray-900">Checking</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-gray-500">Last Updated</span>
+                            <span class="text-sm text-gray-600">Jun 27 at 3:12 PM</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Protocol Status -->
+                <div class="bg-white rounded-2xl p-4 border border-gray-200 space-y-3">
+                    <p class="text-sm font-semibold text-gray-900">Safety Protocols (6 of 7)</p>
+
+                    <div class="space-y-2">
+                        <!-- Step 1 -->
+                        <div class="flex items-center gap-3 pb-2">
+                            <div class="flex-shrink-0">
+                                <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-semibold text-gray-900">Initialize SafeSpace Protocols</p>
+                                <p class="text-xs text-gray-500">Completed Jun 27 at 2:45 PM</p>
+                            </div>
+                        </div>
+
+                        <!-- Step 2 -->
+                        <div class="flex items-center gap-3 pb-2">
+                            <div class="flex-shrink-0">
+                                <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-semibold text-gray-900">Describe What Happened</p>
+                                <p class="text-xs text-gray-500">Completed Jun 27 at 2:46 PM</p>
+                            </div>
+                        </div>
+
+                        <!-- Step 3 -->
+                        <div class="flex items-center gap-3 pb-2">
+                            <div class="flex-shrink-0">
+                                <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-semibold text-gray-900">Notify Family Members</p>
+                                <p class="text-xs text-gray-500">Completed Jun 27 at 2:47 PM</p>
+                            </div>
+                        </div>
+
+                        <!-- Step 4 -->
+                        <div class="flex items-center gap-3 pb-2">
+                            <div class="flex-shrink-0">
+                                <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-semibold text-gray-900">Select Bank</p>
+                                <p class="text-xs text-gray-500">Completed Jun 27 at 2:48 PM</p>
+                            </div>
+                        </div>
+
+                        <!-- Step 5 -->
+                        <div class="flex items-center gap-3 pb-2">
+                            <div class="flex-shrink-0">
+                                <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-semibold text-gray-900">Contact Bank</p>
+                                <p class="text-xs text-gray-500">Completed Jun 27 at 2:55 PM</p>
+                            </div>
+                        </div>
+
+                        <!-- Step 6 -->
+                        <div class="flex items-center gap-3 pb-2">
+                            <div class="flex-shrink-0">
+                                <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-semibold text-gray-900">Notify Police</p>
+                                <p class="text-xs text-gray-500">Completed Jun 27 at 3:00 PM</p>
+                            </div>
+                        </div>
+
+                        <!-- Step 7 -->
+                        <div class="flex items-center gap-3">
+                            <div class="flex-shrink-0">
+                                <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-semibold text-gray-700">Safety Suggestions</p>
+                                <p class="text-xs text-gray-500">Pending</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex gap-2 pt-2">
+                    <a href="#"
+                        class="flex-1 bg-orange-accent hover:bg-orange-dark text-white font-semibold py-3 px-4 rounded-xl transition-colors">
+                        Update Case
+                    </a>
+                    <a href="reports.html"
+                        class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-900 font-semibold py-3 px-4 rounded-xl transition-colors">
+                        Back
+                    </a>
+                </div>
+            </div>
+
+            <!-- Navbar Container -->
+            <div id="navbar-container"></div>
+        </div>
+    </div>
+
+    <!-- Initialize Navbar -->
+    <script>
+        renderNavbar('navbar-container', 'reports');
+    </script>
+</body>
+
+</html>

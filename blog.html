@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeCircle - Blog</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 
+    <style>
+        * {
+            outline: 1px solid red !important;
+        }
+    </style> -->
+
+    <!-- Tailwind Config for Custom Colors -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'orange-pastel': '#FFD4B3',
+                        'orange-accent': '#FF8C42',
+                        'orange-dark': '#FF6B35',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles/style.css">
+
+    <!-- Navbar Script -->
+    <script src="script/navbar.js"></script>
+
+    <!-- Blog Data -->
+    <script src="data/blog.js"></script>
+</head>
+
+<body
+    class="bg-gradient-to-br from-orange-pastel via-orange-100 to-white min-h-screen flex items-center justify-center md:py-5 p-0">
+
+    <div class="main-container">
+        <!-- Card Container -->
+        <div class="app-shell pb-24">
+
+            <!-- Header -->
+            <div
+                class="bg-gradient-to-r from-orange-accent to-orange-dark text-white rounded-b-2xl p-6 space-y-1 -mx-6 sm:-mx-8 px-6 sm:px-8">
+                <h1 class="text-2xl font-bold">Blog</h1>
+                <p class="text-sm text-orange-100">Latest updates and articles</p>
+            </div>
+
+            <!-- Blog Posts Container -->
+            <div id="blog-posts" class="space-y-4 mt-6">
+                <!-- Blog posts will be rendered here -->
+            </div>
+
+            <!-- Navbar Container -->
+            <div id="navbar-container"></div>
+        </div>
+    </div>
+
+    <!-- Initialize Navbar -->
+    <script>
+        renderNavbar('navbar-container', 'circle');
+
+        // Render Blog Posts
+        function render_blog_posts() {
+            const container = document.getElementById('blog-posts');
+            container.innerHTML = '';
+
+            blog_data.forEach(blog => {
+                const post = document.createElement('div');
+                post.className = 'bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-200';
+                post.innerHTML = `
+                    <img src="${blog.image}" alt="${blog.title}" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h2 class="text-lg font-bold text-gray-800 mb-2">${blog.title}</h2>
+                        <p class="text-sm text-gray-600 leading-relaxed">${blog.content}</p>
+                        <button class="mt-4 px-4 py-2 bg-orange-accent text-white rounded-lg hover:bg-orange-dark transition-colors duration-200 text-sm font-semibold">Read More</button>
+                    </div>
+                `;
+                container.appendChild(post);
+            });
+        }
+
+        // Initialize blog posts on page load
+        render_blog_posts();
+
+        // Toggle Switch Handler
+        document.querySelectorAll('.toggle-switch').forEach(button => {
+            button.addEventListener('click', function () {
+                this.classList.toggle('active');
+                const state = this.classList.contains('active') ? 'on' : 'off';
+                this.setAttribute('data-state', state);
+            });
+        });
+    </script>
+</body>
+
+</html>

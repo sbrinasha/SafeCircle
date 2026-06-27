@@ -1,0 +1,903 @@
+/* =====================
+   Global
+   ===================== */
+* {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+body::-webkit-scrollbar {
+    display: none;
+}
+
+/* =====================
+   Navbar
+   ===================== */
+.navbar {
+    background: #fff;
+    border-top: 1px solid #FFD4B3;
+    margin: 0 -1.5rem -1.5rem -1.5rem;
+    padding: 0.5rem 1rem;
+}
+
+.navbar-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    gap: 0.5rem;
+}
+
+.navbar-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    border-radius: 0.75rem;
+    color: #999;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex: 1;
+    min-width: 0;
+}
+
+.navbar-button:hover {
+    color: #FF8C42;
+}
+
+/* =====================
+   Page Layout
+   ===================== */
+.main-container {
+    width: 100%;
+    max-width: 28rem;
+    /* max-w-md */
+    position: relative;
+    z-index: 10;
+}
+
+.page-container {
+    max-width: 28rem;
+    /* max-w-md */
+    margin: 0 auto;
+}
+
+.page-content {
+    padding: 1.5rem 1rem;
+}
+
+.app-shell {
+    background-color: white;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 1.5rem;
+    padding-top: 0px !important;
+    /* Space for navbar */
+    gap: 1.5rem;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+@media (min-width: 640px) {
+    .app-shell {
+        border-radius: 1.875rem;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        padding: 2rem;
+        min-height: auto;
+    }
+}
+
+/* =====================
+   Toggle Switch
+   ===================== */
+.toggle-switch {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    width: 44px;
+    height: 24px;
+    background-color: #e5e7eb;
+    border: none;
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    padding: 2px;
+}
+
+.toggle-switch.active {
+    background-color: #FF8C42;
+}
+
+.toggle-slider {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    background-color: white;
+    border-radius: 50%;
+    transition: left 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.toggle-switch.active .toggle-slider {
+    left: 22px;
+}
+
+/* =====================
+   Scrollbar Hide
+   ===================== */
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+/* =====================
+   Alert Page
+   ===================== */
+.alert-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    padding: 1.5rem;
+    gap: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.cancel-alert-button {
+    padding: 0.75rem 1.5rem;
+    background-color: #f3f4f6;
+    border: 2px solid #FFD4B3;
+    border-radius: 0.75rem;
+    color: #FF8C42;
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
+    max-width: 280px;
+}
+
+.cancel-alert-button:hover {
+    background-color: #ffe8dc;
+    color: #FF6B35;
+    border-color: #FF8C42;
+}
+
+.cancel-alert-button:active {
+    transform: scale(0.98);
+}
+
+.warning-icon-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    background-color: #FFD4B3;
+    border-radius: 1.5rem;
+    animation: pulse-warning 2s infinite;
+}
+
+@keyframes pulse-warning {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.8;
+        transform: scale(1.05);
+    }
+}
+
+/* Countdown Timer */
+.countdown-wrapper {
+    width: 100%;
+    max-width: 280px;
+}
+
+.countdown-container {
+    position: relative;
+    width: 100%;
+    height: 160px;
+    background: linear-gradient(135deg, #fff5f0 0%, #ffe8dc 100%);
+    border: 2px solid #FFD4B3;
+    border-radius: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.countdown-progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: linear-gradient(90deg, #FF8C42 0%, #FF6B35 100%);
+    width: 0%;
+    opacity: 0.1;
+    transition: width 1s linear;
+}
+
+.countdown-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+    z-index: 2;
+}
+
+.countdown-number {
+    font-size: 3.5rem;
+    font-weight: bold;
+    color: #FF8C42;
+    line-height: 1;
+}
+
+.countdown-label {
+    font-size: 0.875rem;
+    color: #666;
+    font-weight: 500;
+}
+
+/* Swipe Confirmation Area */
+.swipe-area {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    animation: slide-up 0.5s ease-out;
+}
+
+@keyframes slide-up {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.swipe-instruction {
+    text-align: center;
+    width: 100%;
+}
+
+.swipe-track {
+    width: 100%;
+    height: 56px;
+    background-color: #f3f4f6;
+    border: 2px solid #FFD4B3;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    padding: 4px;
+    position: relative;
+    cursor: grab;
+}
+
+.swipe-track:active {
+    cursor: grabbing;
+}
+
+.swipe-thumb {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #FF8C42 0%, #FF6B35 100%);
+    border-radius: 9999px;
+    color: white;
+    cursor: grab;
+    transition: transform 0.05s;
+    user-select: none;
+    flex-shrink: 0;
+}
+
+.swipe-thumb:active {
+    cursor: grabbing;
+}
+
+/* Confirmation Message */
+.confirmation-message {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    animation: scale-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes scale-in {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Utility class for hidden elements */
+.hidden {
+    display: none !important;
+}
+
+/* =====================
+   Alert-2 Flow Feed
+   ===================== */
+.flow-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: #FF8C42;
+    padding: 1rem 1.5rem;
+    margin: 0 -1.5rem;
+    border-bottom: none;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.flow-header-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #ef4444;
+    animation: pulse-dot 1.5s infinite;
+    flex-shrink: 0;
+}
+
+@keyframes pulse-dot {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.5;
+        transform: scale(1.3);
+    }
+}
+
+.flow-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-top: 1rem;
+    padding-bottom: 2rem;
+}
+
+/* Flow Step Card */
+.flow-step {
+    border-radius: 1rem;
+    overflow: hidden;
+    animation: slide-up 0.4s ease-out;
+}
+
+.flow-step--active {
+    background: white;
+    border: 2px solid #FF8C42;
+    padding: 1rem;
+}
+
+.flow-step--complete {
+    background: #f9fafb;
+    border: 1.5px solid #e5e7eb;
+    padding: 0.75rem 1rem;
+}
+
+.step-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.step-icon {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.step-title {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #374151;
+}
+
+.step-title--complete {
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.step-summary {
+    font-size: 0.75rem;
+    color: #9ca3af;
+    margin-left: auto;
+    text-align: right;
+    max-width: 120px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.step-body {
+    margin-top: 1rem;
+}
+
+/* Spinner */
+.spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #FFD4B3;
+    border-top-color: #FF8C42;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Progress Bar */
+.progress-track {
+    width: 100%;
+    height: 8px;
+    background-color: #f3f4f6;
+    border-radius: 9999px;
+    overflow: hidden;
+    margin-top: 0.75rem;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #FF8C42 0%, #FF6B35 100%);
+    border-radius: 9999px;
+    width: 0%;
+    transition: width linear;
+}
+
+/* Person Row */
+.person-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.person-row:last-child {
+    border-bottom: none;
+}
+
+.person-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FFD4B3 0%, #FF8C42 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 0.875rem;
+    flex-shrink: 0;
+}
+
+.person-info {
+    flex: 1;
+}
+
+.person-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+.person-relation {
+    font-size: 0.75rem;
+    color: #9ca3af;
+}
+
+.person-status {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.person-spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #FFD4B3;
+    border-top-color: #FF8C42;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+/* Bank Card */
+.bank-card {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 0.5rem;
+    background: white;
+}
+
+.bank-card:last-child {
+    margin-bottom: 0;
+}
+
+.bank-card:active {
+    transform: scale(0.98);
+}
+
+.bank-card.selected {
+    border-color: #FF8C42;
+    background-color: #fff5f0;
+}
+
+.bank-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 0.75rem;
+    background: linear-gradient(135deg, #FFD4B3 0%, #FF8C42 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.bank-info {
+    flex: 1;
+}
+
+.bank-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+.bank-type {
+    font-size: 0.75rem;
+    color: #9ca3af;
+}
+
+.bank-number {
+    font-size: 0.75rem;
+    color: #6b7280;
+    font-family: monospace;
+    letter-spacing: 0.05em;
+}
+
+/* Suggestion Card */
+.suggestion-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: #f9fafb;
+    border-radius: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.suggestion-card:last-child {
+    margin-bottom: 0;
+}
+
+.suggestion-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: #FFD4B3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+}
+
+.suggestion-text {
+    font-size: 0.8125rem;
+    color: #374151;
+    line-height: 1.5;
+}
+
+/* Textarea */
+.flow-textarea {
+    width: 100%;
+    border: 2px solid #FFD4B3;
+    border-radius: 0.75rem;
+    padding: 0.75rem;
+    font-size: 0.875rem;
+    color: #374151;
+    resize: none;
+    outline: none;
+    font-family: inherit;
+    transition: border-color 0.2s;
+}
+
+.flow-textarea:focus {
+    border-color: #FF8C42;
+}
+
+.flow-submit-btn {
+    width: 100%;
+    margin-top: 0.75rem;
+    padding: 0.75rem;
+    background: linear-gradient(135deg, #FF8C42 0%, #FF6B35 100%);
+    color: white;
+    font-weight: 600;
+    font-size: 0.875rem;
+    border: none;
+    border-radius: 0.75rem;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+}
+
+.flow-submit-btn:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+}
+
+.flow-proceed-btn {
+    width: 100%;
+    margin-top: 1rem;
+    padding: 0.875rem;
+    background: linear-gradient(135deg, #FF8C42 0%, #FF6B35 100%);
+    color: white;
+    font-weight: 700;
+    font-size: 0.9375rem;
+    border: none;
+    border-radius: 0.875rem;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+}
+
+.flow-proceed-btn:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+}
+
+/* =====================
+   Alert-3 Receipt
+   ===================== */
+.receipt-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    padding: 1.5rem;
+    gap: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.receipt-icon-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    background-color: #dcfce7;
+    border-radius: 1.5rem;
+    animation: scale-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.receipt-card {
+    width: 100%;
+    background: white;
+    border: 2px solid #FFD4B3;
+    border-radius: 1.25rem;
+    padding: 1rem;
+}
+
+.receipt-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.receipt-row:last-of-type {
+    margin-bottom: 0;
+}
+
+.receipt-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+}
+
+.receipt-value {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #374151;
+    text-align: right;
+    font-family: monospace;
+}
+
+.receipt-value--multiline {
+    font-family: inherit;
+    text-align: right;
+    line-height: 1.4;
+    max-width: 200px;
+}
+
+.receipt-section-title {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0.25rem 0 0.25rem 0;
+}
+
+.protocol-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.protocol-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0;
+    font-size: 0.75rem;
+    color: #374151;
+}
+
+.protocol-item svg {
+    flex-shrink: 0;
+}
+
+/* =====================
+   Modal
+   ===================== */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+}
+
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+}
+
+.modal-content {
+    position: relative;
+    background: white;
+    border-radius: 1.25rem;
+    padding: 1.5rem;
+    max-width: 320px;
+    width: 90%;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    animation: modal-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes modal-pop {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background-color: #f3f4f6;
+    color: #6b7280;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+    background-color: #FFD4B3;
+    color: #FF8C42;
+}
+
+.modal-close:active {
+    transform: scale(0.95);
+}
+
+.receipt-info-box p {
+    margin: 0;
+}
+
+.icon-button-group {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.5rem;
+}
+
+.icon-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.75rem 0.5rem;
+    background: white;
+    border: 2px solid #FFD4B3;
+    border-radius: 1rem;
+    color: #FF8C42;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.7rem;
+}
+
+.icon-button:active {
+    transform: scale(0.95);
+    background-color: #fff5f0;
+}
+
+.icon-button:hover {
+    border-color: #FF8C42;
+    background-color: #fff5f0;
+}

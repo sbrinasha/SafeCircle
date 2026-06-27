@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeCircle - Reports</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Tailwind Config for Custom Colors -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'orange-pastel': '#FFD4B3',
+                        'orange-accent': '#FF8C42',
+                        'orange-dark': '#FF6B35',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles/style.css">
+
+    <!-- Navbar Script -->
+    <script src="script/navbar.js"></script>
+</head>
+
+<body
+    class="bg-gradient-to-br from-orange-pastel via-orange-100 to-white min-h-screen flex items-center justify-center md:py-5 p-0">
+
+    <div class="main-container">
+        <!-- Card Container -->
+        <div class="app-shell">
+
+            <!-- Header -->
+            <div
+                class="bg-gradient-to-r from-orange-accent to-orange-dark text-white rounded-b-2xl p-6 space-y-1 -mx-6 sm:-mx-8 px-6 sm:px-8">
+                <h1 class="text-2xl font-bold">Your Reports</h1>
+                <p class="text-sm text-orange-100">View and manage your case reports</p>
+            </div>
+
+            <!-- Reports Section -->
+            <div class="space-y-3">
+                <h2 class="text-lg font-semibold text-gray-700">Active Cases (1)</h2>
+
+                <!-- Report Card -->
+                <div
+                    class="bg-white rounded-2xl p-4 border border-gray-200 space-y-3 hover:shadow-md transition-shadow">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <h3 class="font-semibold text-gray-900">Case SC-2026-145892</h3>
+                            <p class="text-xs text-gray-500">Opened Jun 27, 2026 at 2:45 PM</p>
+                        </div>
+                        <span class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-1 rounded-full">In
+                            Progress</span>
+                    </div>
+
+                    <!-- Report Details -->
+                    <div class="pt-3 border-t border-gray-200 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-700">Bank</span>
+                            <span class="text-sm font-semibold text-gray-900">Chase (Checking)</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-700">Description</span>
+                            <span class="text-sm text-gray-600 text-right">Unauthorized transaction…</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-700">Protocols Triggered</span>
+                            <span class="text-sm font-semibold text-gray-900">6 of 7</span>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="pt-3 border-t border-gray-200 flex gap-2">
+                        <a href="view-report.html"
+                            class="flex-1 bg-orange-accent hover:bg-orange-dark text-white font-semibold py-2 px-3 rounded-xl text-sm transition-colors">
+                            View Details
+                        </a>
+                        <a href="#"
+                            class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-900 font-semibold py-2 px-3 rounded-xl text-sm transition-colors">
+                            Update
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navbar Container -->
+            <div id="navbar-container"></div>
+        </div>
+    </div>
+
+    <!-- Initialize Navbar -->
+    <script>
+        renderNavbar('navbar-container', 'reports');
+    </script>
+</body>
+
+</html>

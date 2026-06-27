@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeCircle - Circle</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 
+    <style>
+        * {
+            outline: 1px solid red !important;
+        }
+    </style> -->
+
+    <!-- Tailwind Config for Custom Colors -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'orange-pastel': '#FFD4B3',
+                        'orange-accent': '#FF8C42',
+                        'orange-dark': '#FF6B35',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles/style.css">
+
+    <!-- Navbar Script -->
+    <script src="script/navbar.js"></script>
+    <!-- Mock Data -->
+    <script src="script/javascript.js"></script>
+</head>
+
+<body
+    class="bg-gradient-to-br from-orange-pastel via-orange-100 to-white min-h-screen flex items-center justify-center md:py-5 p-0">
+
+    <div class="main-container">
+        <!-- Card Container -->
+        <div class="app-shell">
+
+            <!-- Header -->
+            <div
+                class="bg-gradient-to-r from-orange-accent to-orange-dark text-white rounded-b-2xl p-6 space-y-1 -mx-6 sm:-mx-8 px-6 sm:px-8">
+                <h1 class="text-2xl font-bold">Your Circle</h1>
+                <p class="text-sm text-orange-100">Manage members and notifications</p>
+            </div>
+
+            <!-- Members Section -->
+            <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-lg font-semibold text-gray-700">Members (<span id="member-count">0</span>)</h2>
+                    <button
+                        class="bg-gradient-to-r from-orange-accent to-orange-dark text-white font-semibold py-2 px-3 rounded-xl text-sm hover:shadow-md transition-shadow">
+                        + Add
+                    </button>
+                </div>
+
+                <!-- Members Container -->
+                <div id="members-container" class="space-y-3"></div>
+            </div>
+
+            <!-- Navbar Container -->
+            <div id="navbar-container"></div>
+        </div>
+    </div>
+
+    <!-- Initialize Navbar -->
+    <script>
+        renderNavbar('navbar-container', 'circle');
+
+        // Populate members from mock data
+        function populateMembers() {
+            const container = document.getElementById('members-container');
+            const members = mock_data.mock_family_members;
+
+            document.getElementById('member-count').textContent = members.length;
+
+            // Color gradients for avatars
+            const gradients = [
+                'from-orange-accent to-orange-dark',
+                'from-blue-400 to-blue-600',
+                'from-purple-400 to-purple-600'
+            ];
+
+            const statusIndicators = ['bg-green-400', 'bg-yellow-400', 'bg-gray-400'];
+            const statusLabels = ['Online', 'Away', 'Offline'];
+            const lastActive = ['2h ago', '5h ago', '1d ago'];
+
+            const membersHTML = members.map((m, idx) => `
+                <div class="bg-orange-50 rounded-2xl p-4 border border-orange-pastel space-y-3">
+                    <div class="flex items-start justify-between">
+                        <div class="flex items-center space-x-3 flex-1">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br ${gradients[idx % gradients.length]} flex items-center justify-center shrink-0">
+                                <span class="text-white font-bold">${m.name.split(' ').map(n => n[0]).join('')}</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-semibold text-gray-800">${m.name}</h3>
+                                <p class="text-xs text-gray-500">${m.relation} • Last active ${lastActive[idx % lastActive.length]}</p>
+                            </div>
+                        </div>
+                        <span class="w-3 h-3 rounded-full ${statusIndicators[idx % statusIndicators.length]} shrink-0" title="${statusLabels[idx % statusLabels.length]}"></span>
+                    </div>
+
+                    <!-- Notification Preferences -->
+                    <div class="pt-2 border-t border-orange-pastel flex items-center justify-between">
+                        <span class="text-xs text-gray-700">Alert on scam</span>
+                        <button class="toggle-switch ${idx === members.length - 1 ? '' : 'active'}" data-state="${idx === members.length - 1 ? 'off' : 'on'}">
+                            <div class="toggle-slider"></div>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = membersHTML;
+
+            // Attach toggle handlers to dynamically created elements
+            document.querySelectorAll('.toggle-switch').forEach(button => {
+                button.addEventListener('click', function () {
+                    this.classList.toggle('active');
+                    const state = this.classList.contains('active') ? 'on' : 'off';
+                    this.setAttribute('data-state', state);
+                });
+            });
+        }
+
+        // Initialize on page load
+        populateMembers();
+    </script>
+</body>
+
+</html>

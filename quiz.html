@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeCircle - Safety Quiz</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Tailwind Config for Custom Colors -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'orange-pastel': '#FFD4B3',
+                        'orange-accent': '#FF8C42',
+                        'orange-dark': '#FF6B35',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles/style.css">
+
+    <!-- Navbar Script -->
+    <script src="script/navbar.js"></script>
+
+    <!-- Quiz Data -->
+    <script src="data/quiz.js"></script>
+</head>
+
+<body
+    class="bg-gradient-to-br from-orange-pastel via-orange-100 to-white min-h-screen flex items-center justify-center md:py-5 p-0">
+
+    <div class="main-container">
+        <!-- Card Container -->
+        <div class="app-shell pb-24">
+
+            <!-- Header -->
+            <div
+                class="bg-gradient-to-r from-orange-accent to-orange-dark text-white rounded-b-2xl p-6 space-y-1 -mx-6 sm:-mx-8 px-6 sm:px-8">
+                <h1 class="text-2xl font-bold">Safety Knowledge Quiz</h1>
+                <p class="text-sm text-orange-100">Test your knowledge and earn marks</p>
+            </div>
+
+            <!-- Quiz Container -->
+            <div id="quiz-container" class="space-y-4 mt-6"></div>
+
+            <!-- Navbar Container -->
+            <div id="navbar-container"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        renderNavbar('navbar-container', 'home');
+
+        // Quiz State
+        let currentQuestion = 0;
+        let userAnswers = {};
+        let score = 0;
+        let showingFeedback = false;
+        let quizStarted = false;
+
+        // Initialize Quiz
+        function initializeQuiz() {
+            showIntro();
+        }
+
+        // Show Quiz Introduction
+        function showIntro() {
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = `
+                <div class="space-y-6 flex flex-col items-center justify-center min-h-96">
+                    <!-- Quiz Image -->
+                    <img src="img/quiz.jpeg" alt="Safety Quiz" class="w-48 h-48 object-cover rounded-2xl shadow-lg">
+                    
+                    <!-- Intro Content -->
+                    <div class="space-y-3 text-center">
+                        <h2 class="text-2xl font-bold text-gray-900">Ready to Test Your Safety Knowledge?</h2>
+                        <p class="text-gray-600 text-sm leading-relaxed">
+                            This quiz has 6 questions designed to test your understanding of common scams and safety practices. 
+                            Each question has helpful explanations to help you learn.
+                        </p>
+                        <p class="text-xs text-gray-500 font-semibold">
+                            Time: ~5 minutes | Total Marks: 7
+                        </p>
+                    </div>
+
+                    <!-- Start Button -->
+                    <button onclick="startQuiz()" class="px-6 py-3 bg-orange-accent text-white rounded-lg hover:bg-orange-dark transition-colors font-semibold text-lg w-full max-w-xs">
+                        Start Quiz →
+                    </button>
+                </div>
+            `;
+        }
+
+        function startQuiz() {
+            quizStarted = true;
+            renderQuestion();
+        }
+
+        // Render Current Question
+        function renderQuestion() {
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '';
+
+            if (currentQuestion >= quiz_data.questions.length) {
+                showSummary();
+                return;
+            }
+
+            const question = quiz_data.questions[currentQuestion];
+            const progressPercent = ((currentQuestion + 1) / quiz_data.questions.length) * 100;
+
+            let questionHTML = `
+                <div class="space-y-4">
+                    <!-- Progress Bar -->
+                    <div class="space-y-1">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-semibold text-gray-600">Question ${currentQuestion + 1}/${quiz_data.questions.length}</span>
+                            <span class="text-xs font-semibold text-orange-accent">${question.marks} mark${question.marks > 1 ? 's' : ''}</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-orange-accent h-2 rounded-full transition-all duration-300" style="width: ${progressPercent}%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Question -->
+                    <div class="mt-6">
+                        <h2 class="text-lg font-bold text-gray-900 mb-4">${question.question}</h2>
+                        <div id="options-container" class="space-y-3"></div>
+                    </div>
+                    <div id="feedback-container"></div>
+                </div>
+            `;
+
+            container.innerHTML = questionHTML;
+            const optionsContainer = document.getElementById('options-container');
+
+            // Render Options Based on Type
+            if (question.type === 'multiple-choice') {
+                question.options.forEach((option, index) => {
+                    const optionDiv = document.createElement('div');
+                    optionDiv.className = 'option-choice cursor-pointer p-4 rounded-lg border-2 border-gray-200 hover:border-orange-accent transition-all duration-200';
+                    optionDiv.innerHTML = option.text;
+                    optionDiv.dataset.index = index;
+                    optionDiv.dataset.correct = option.correct;
+
+                    if (userAnswers[currentQuestion] === index) {
+                        optionDiv.classList.add('border-orange-accent', 'bg-orange-50');
+                    }
+
+                    if (!showingFeedback) {
+                        optionDiv.addEventListener('click', () => {
+                            selectMultipleChoiceOption(index);
+                            renderQuestion();
+                        });
+                    } else {
+                        optionDiv.style.pointerEvents = 'none';
+                        if (option.correct) {
+                            optionDiv.classList.add('border-green-500', 'bg-green-50');
+                        } else if (userAnswers[currentQuestion] === index) {
+                            optionDiv.classList.add('border-red-500', 'bg-red-50');
+                        }
+                    }
+                    optionsContainer.appendChild(optionDiv);
+                });
+            } else if (question.type === 'true-false') {
+                ['True', 'False'].forEach((label, index) => {
+                    const optionDiv = document.createElement('div');
+                    optionDiv.className = 'option-choice cursor-pointer p-4 rounded-lg border-2 border-gray-200 hover:border-orange-accent transition-all duration-200';
+                    optionDiv.innerHTML = label;
+                    optionDiv.dataset.index = index;
+                    optionDiv.dataset.correct = (index === 0 ? question.correct : !question.correct);
+
+                    if (userAnswers[currentQuestion] === index) {
+                        optionDiv.classList.add('border-orange-accent', 'bg-orange-50');
+                    }
+
+                    if (!showingFeedback) {
+                        optionDiv.addEventListener('click', () => {
+                            selectTrueFalseOption(index);
+                            renderQuestion();
+                        });
+                    } else {
+                        optionDiv.style.pointerEvents = 'none';
+                        const isCorrect = (index === 0 ? question.correct : !question.correct);
+                        if (isCorrect) {
+                            optionDiv.classList.add('border-green-500', 'bg-green-50');
+                        } else if (userAnswers[currentQuestion] === index) {
+                            optionDiv.classList.add('border-red-500', 'bg-red-50');
+                        }
+                    }
+                    optionsContainer.appendChild(optionDiv);
+                });
+            } else if (question.type === 'multiple-selection') {
+                question.options.forEach((option, index) => {
+                    const optionDiv = document.createElement('div');
+                    optionDiv.className = 'option-choice cursor-pointer p-4 rounded-lg border-2 border-gray-200 hover:border-orange-accent transition-all duration-200 flex items-center gap-3';
+
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.dataset.index = index;
+                    checkbox.classList.add('w-5', 'h-5');
+                    if (showingFeedback) {
+                        checkbox.disabled = true;
+                    }
+
+                    const label = document.createElement('span');
+                    label.textContent = option.text;
+                    label.classList.add('flex-1');
+
+                    optionDiv.appendChild(checkbox);
+                    optionDiv.appendChild(label);
+
+                    if (userAnswers[currentQuestion] && userAnswers[currentQuestion].includes(index)) {
+                        checkbox.checked = true;
+                        optionDiv.classList.add('border-orange-accent', 'bg-orange-50');
+                    }
+
+                    if (!showingFeedback) {
+                        checkbox.addEventListener('change', () => {
+                            selectMultipleSelection(index, checkbox.checked);
+                            renderQuestion();
+                        });
+                        optionDiv.addEventListener('click', (e) => {
+                            if (e.target !== checkbox) {
+                                checkbox.checked = !checkbox.checked;
+                                selectMultipleSelection(index, checkbox.checked);
+                                renderQuestion();
+                            }
+                        });
+                    } else {
+                        optionDiv.style.pointerEvents = 'none';
+                        if (option.correct) {
+                            optionDiv.classList.add('border-green-500', 'bg-green-50');
+                        } else if (userAnswers[currentQuestion] && userAnswers[currentQuestion].includes(index)) {
+                            optionDiv.classList.add('border-red-500', 'bg-red-50');
+                        }
+                    }
+                    optionsContainer.appendChild(optionDiv);
+                });
+            }
+
+            // Navigation Buttons
+            if (showingFeedback) {
+                // Show feedback with explanation and continue button
+                const feedbackDiv = document.getElementById('feedback-container');
+
+                let isCorrect = false;
+                if (question.type === 'multiple-choice') {
+                    isCorrect = userAnswers[currentQuestion] !== undefined && question.options[userAnswers[currentQuestion]].correct;
+                } else if (question.type === 'true-false') {
+                    isCorrect = userAnswers[currentQuestion] !== undefined && (userAnswers[currentQuestion] === 0 ? question.correct : !question.correct);
+                } else if (question.type === 'multiple-selection') {
+                    isCorrect = userAnswers[currentQuestion] && userAnswers[currentQuestion].length === question.correctCount &&
+                        userAnswers[currentQuestion].every(idx => question.options[idx].correct);
+                }
+
+                const feedbackHTML = `
+                    <div class="mt-6 p-4 rounded-lg ${isCorrect ? 'bg-green-50 border-2 border-green-500' : 'bg-red-50 border-2 border-red-500'}">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="text-2xl">${isCorrect ? '✓' : '✗'}</span>
+                            <p class="font-bold text-lg ${isCorrect ? 'text-green-700' : 'text-red-700'}">${isCorrect ? 'Correct!' : 'Incorrect'}</p>
+                        </div>
+                        <p class="text-sm text-gray-700 leading-relaxed">${question.explanation}</p>
+                    </div>
+                `;
+                feedbackDiv.innerHTML = feedbackHTML;
+
+                const navDiv = document.createElement('div');
+                navDiv.className = 'flex gap-3 mt-8';
+
+                const continueBtn = document.createElement('button');
+                continueBtn.textContent = currentQuestion === quiz_data.questions.length - 1 ? 'View Results →' : 'Continue →';
+                continueBtn.className = 'flex-1 px-4 py-2 bg-orange-accent text-white rounded-lg hover:bg-orange-dark transition-colors font-semibold';
+                continueBtn.addEventListener('click', () => {
+                    if (currentQuestion === quiz_data.questions.length - 1) {
+                        calculateScore();
+                    } else {
+                        currentQuestion++;
+                        showingFeedback = false;
+                        renderQuestion();
+                    }
+                });
+                navDiv.appendChild(continueBtn);
+                container.appendChild(navDiv);
+            } else {
+                // Show regular navigation if answer not yet submitted
+                const navDiv = document.createElement('div');
+                navDiv.className = 'flex gap-3 mt-8';
+
+                if (currentQuestion > 0) {
+                    const prevBtn = document.createElement('button');
+                    prevBtn.textContent = '← Previous';
+                    prevBtn.className = 'flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-semibold';
+                    prevBtn.addEventListener('click', () => {
+                        currentQuestion--;
+                        showingFeedback = false;
+                        renderQuestion();
+                    });
+                    navDiv.appendChild(prevBtn);
+                }
+
+                const nextBtn = document.createElement('button');
+                nextBtn.textContent = 'Submit Answer →';
+                nextBtn.className = 'flex-1 px-4 py-2 bg-orange-accent text-white rounded-lg hover:bg-orange-dark transition-colors font-semibold';
+                nextBtn.addEventListener('click', () => {
+                    if (userAnswers[currentQuestion] !== undefined) {
+                        showingFeedback = true;
+                        renderQuestion();
+                    }
+                });
+                navDiv.appendChild(nextBtn);
+
+                container.appendChild(navDiv);
+            }
+        }
+
+        function selectMultipleChoiceOption(index) {
+            userAnswers[currentQuestion] = index;
+        }
+
+        function selectTrueFalseOption(index) {
+            userAnswers[currentQuestion] = index;
+        }
+
+        function selectMultipleSelection(index, checked) {
+            if (!userAnswers[currentQuestion]) {
+                userAnswers[currentQuestion] = [];
+            }
+            if (checked) {
+                if (!userAnswers[currentQuestion].includes(index)) {
+                    userAnswers[currentQuestion].push(index);
+                }
+            } else {
+                userAnswers[currentQuestion] = userAnswers[currentQuestion].filter(i => i !== index);
+            }
+        }
+
+        function calculateScore() {
+            score = 0;
+            quiz_data.questions.forEach((question, index) => {
+                const userAnswer = userAnswers[index];
+
+                if (question.type === 'multiple-choice') {
+                    if (userAnswer !== undefined && question.options[userAnswer].correct) {
+                        score += question.marks;
+                    }
+                } else if (question.type === 'true-false') {
+                    const isCorrect = (userAnswer === 0 ? question.correct : !question.correct);
+                    if (userAnswer !== undefined && isCorrect) {
+                        score += question.marks;
+                    }
+                } else if (question.type === 'multiple-selection') {
+                    if (userAnswer && userAnswer.length === question.correctCount) {
+                        const allCorrect = userAnswer.every(idx => question.options[idx].correct);
+                        if (allCorrect) {
+                            score += question.marks;
+                        }
+                    }
+                }
+            });
+            showSummary();
+        }
+
+        function showSummary() {
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '';
+
+            const scoreMessage = get_score_message(score);
+            const totalMarks = quiz_data.questions.reduce((sum, q) => sum + q.marks, 0);
+
+            let summaryHTML = `
+                <div class="space-y-6">
+                    <!-- Score Card -->
+                    <div class="bg-white rounded-2xl p-6 shadow-md text-center space-y-4">
+                        <div class="text-5xl font-bold text-orange-accent">${score}/${totalMarks}</div>
+                        <h2 class="text-2xl font-bold text-gray-900">${scoreMessage.message}</h2>
+                        <p class="text-gray-600">${scoreMessage.details}</p>
+                    </div>
+
+                    <!-- Score Breakdown -->
+                    <div class="bg-orange-50 rounded-2xl p-4 space-y-3 border border-orange-pastel">
+                        <h3 class="font-bold text-gray-900">Your Answers:</h3>
+                        <div id="breakdown" class="space-y-2"></div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex gap-3">
+                        <button onclick="location.href='home.html'" class="flex-1 px-4 py-3 bg-orange-accent text-white rounded-lg hover:bg-orange-dark transition-colors font-semibold">
+                            Return Home
+                        </button>
+                        <button onclick="retakeQuiz()" class="flex-1 px-4 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-semibold">
+                            Retake Quiz
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = summaryHTML;
+
+            const breakdownDiv = document.getElementById('breakdown');
+            quiz_data.questions.forEach((question, index) => {
+                const userAnswer = userAnswers[index];
+                let isCorrect = false;
+
+                if (question.type === 'multiple-choice') {
+                    isCorrect = userAnswer !== undefined && question.options[userAnswer].correct;
+                } else if (question.type === 'true-false') {
+                    isCorrect = userAnswer !== undefined && (userAnswer === 0 ? question.correct : !question.correct);
+                } else if (question.type === 'multiple-selection') {
+                    isCorrect = userAnswer && userAnswer.length === question.correctCount &&
+                        userAnswer.every(idx => question.options[idx].correct);
+                }
+
+                const icon = isCorrect ? '✓' : '✗';
+                const color = isCorrect ? 'text-green-600' : 'text-red-600';
+
+                const itemDiv = document.createElement('div');
+                itemDiv.className = `flex justify-between items-center p-2 rounded ${isCorrect ? 'bg-green-50' : 'bg-red-50'}`;
+                itemDiv.innerHTML = `
+                    <div class="flex-1">
+                        <p class="text-sm font-semibold text-gray-800">Q${index + 1}: ${question.marks} mark${question.marks > 1 ? 's' : ''}</p>
+                    </div>
+                    <span class="text-lg font-bold ${color}">${icon}</span>
+                `;
+                breakdownDiv.appendChild(itemDiv);
+            });
+        }
+
+        function retakeQuiz() {
+            currentQuestion = 0;
+            userAnswers = {};
+            score = 0;
+            quizStarted = false;
+            showingFeedback = false;
+            showIntro();
+        }
+
+        // Start Quiz
+        document.addEventListener('DOMContentLoaded', initializeQuiz);
+    </script>
+</body>
+
+</html>

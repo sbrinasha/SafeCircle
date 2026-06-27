@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeCircle - Home</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- <style>
+        * {
+            outline: 1px solid red !important;
+        }
+    </style> -->
+
+    <!-- Tailwind Config for Custom Colors -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'orange-pastel': '#FFD4B3',
+                        'orange-accent': '#FF8C42',
+                        'orange-dark': '#FF6B35',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles/style.css">
+
+    <!-- Navbar Script -->
+    <script src="script/navbar.js"></script>
+
+    <!-- Blog Data -->
+    <script src="data/blog.js"></script>
+</head>
+
+<body
+    class="bg-gradient-to-br from-orange-pastel via-orange-100 to-white min-h-screen flex items-center justify-center md:py-5 p-0">
+
+    <div class="main-container">
+        <!-- Card Container -->
+        <div class="app-shell pb-24">
+
+            <!-- Welcome Header -->
+            <div class="rounded-b-2xl bg-orange-500 px-4 py-5 -mx-6 mb-2">
+                <!-- Top Row: Logo and Profile/Logout -->
+                <div class="flex items-center justify-between mb-4">
+                    <!-- Logo -->
+                    <div class="rounded-lg flex items-center justify-center w-12 h-12 p-1 flex-shrink-0">
+                        <img src="img/safecircle.png" alt="SafeCircle Logo" class="object-contain w-full h-full">
+                    </div>
+
+                    <!-- Profile and Logout -->
+                    <div class="flex items-center space-x-2">
+                        <button class="p-2 rounded-lg hover:bg-orange-dark transition-colors">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                        </button>
+                        <a href="login.html" class="p-2 rounded-lg hover:bg-orange-dark transition-colors">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
+                                </path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Welcome Message (Left Aligned) -->
+                <div class="py-4 action-row">
+                    <h1 class="text-2xl font-bold text-white">Welcome back, <span class="text-white">John</span>!</h1>
+                    <p class="text-sm text-orange-100">john@example.com</p>
+                </div>
+            </div>
+
+            <!-- Your Circle & Bank Card Details - Left & Right Blocks -->
+            <div class="grid grid-cols-2 gap-3">
+                <!-- Your Circle Card Button (Left) -->
+                <a href="circle.html"
+                    class="block bg-orange-50 rounded-2xl p-4 border border-orange-pastel hover:bg-orange-100 transition-colors duration-200 active:scale-95 transform">
+                    <div class="flex flex-col items-center space-y-3 text-center">
+                        <div
+                            class="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-accent to-orange-dark flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 20h5v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2h5M12 12a4 4 0 100-8 4 4 0 000 8z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-gray-800 text-sm">Your Circle</h3>
+                            <p class="text-xs text-gray-500">View details</p>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Your Circle Card Button (Right) -->
+                <a href="bank.html"
+                    class="block bg-orange-50 rounded-2xl p-4 border border-orange-pastel hover:bg-orange-100 transition-colors duration-200 active:scale-95 transform">
+                    <div class="flex flex-col items-center space-y-3 text-center">
+                        <div
+                            class="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-accent to-orange-dark flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-gray-800 text-sm">Bank</h3>
+                            <p class="text-xs text-gray-500">Manage your banks</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Blog Section -->
+            <div class="space-y-2">
+                <h2 class="text-lg font-bold text-gray-800">Safety Updates</h2>
+                <div id="blog-carousel" class="flex gap-4 overflow-x-auto pb-2 scrollbar-hide"
+                    style="scroll-behavior: smooth; scrollbar-width: none; -ms-overflow-style: none;">
+                    <!-- Blog cards will be inserted here by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Quiz Section -->
+            <div class="mt-6">
+                <a href="quiz.html"
+                    class="block bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-200 active:scale-95 transform">
+                    <img src="img/quiz.jpeg" alt="Safety Quiz" class="w-full h-40 object-cover">
+                    <div class="p-4">
+                        <h3 class="font-bold text-gray-800 text-base mb-1">Safety Knowledge Quiz</h3>
+                        <p class="text-sm text-gray-600">Test your knowledge on common scams and stay one step ahead</p>
+                        <div class="mt-3 flex items-center text-orange-accent text-sm font-semibold">
+                            Take Quiz
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                                </path>
+                            </svg>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Navbar Container -->
+            <div id="navbar-container"></div>
+        </div>
+    </div>
+
+    <!-- Initialize Navbar -->
+    <script>
+        renderNavbar('navbar-container', 'home');
+
+        // Render Blog Carousel
+        function render_blog_carousel() {
+            const carousel = document.getElementById('blog-carousel');
+            carousel.innerHTML = '';
+
+            blog_data.forEach(blog => {
+                const truncated_content = truncate_content(blog.content, 15);
+                const card = document.createElement('div');
+                card.className = 'flex-shrink-0 w-72 h-48 rounded-2xl overflow-hidden relative cursor-pointer transform transition-transform duration-200 active:scale-95 hover:shadow-lg group';
+                card.innerHTML = `
+                    <img src="${blog.image}" alt="${blog.title}" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-50 transition-all duration-200"></div>
+                    <div class="absolute inset-0 p-4 flex flex-col justify-end">
+                        <h3 class="text-white font-bold text-sm leading-tight">${blog.title}</h3>
+                        <p class="text-white text-xs mt-2 line-clamp-2">${truncated_content}</p>
+                    </div>
+                `;
+                card.addEventListener('click', () => handle_blog_click(blog.id));
+                carousel.appendChild(card);
+            });
+        }
+
+        function handle_blog_click(blog_id) {
+            window.location.href = `blog.html?id=${blog_id}`;
+        }
+
+        // Initialize blog carousel on page load
+        render_blog_carousel();
+    </script>
+</body>
+
+</html>

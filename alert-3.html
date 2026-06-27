@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeCircle - Case Filed</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Tailwind Config for Custom Colors -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'orange-pastel': '#FFD4B3',
+                        'orange-accent': '#FF8C42',
+                        'orange-dark': '#FF6B35',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles/style.css">
+
+</head>
+
+<body
+    class="bg-gradient-to-br from-orange-pastel via-orange-100 to-white min-h-screen flex items-center justify-center md:py-5 p-0">
+
+    <div class="main-container">
+        <!-- Toast Notification -->
+        <div id="redirect-toast"
+            class="fixed top-4 left-4 right-4 bg-orange-accent text-white px-4 py-3 rounded-lg shadow-lg hidden z-50 text-center text-sm">
+            Redirecting to reports in <span id="redirect-countdown">10</span> seconds...
+        </div>
+
+        <!-- Card Container -->
+        <div class="app-shell">
+            <!-- Case Receipt Container -->
+            <div class="receipt-container">
+                <!-- Success Icon -->
+                <div class="receipt-icon-container">
+                    <svg class="w-16 h-16 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+
+                <!-- Title -->
+                <h1 class="text-2xl font-bold text-gray-900 text-center mt-1">Case Filed</h1>
+                <p class="text-sm text-gray-600 text-center mt-1">Your scam report has been successfully processed and
+                    escalated.</p>
+
+                <!-- Receipt Card -->
+                <div class="receipt-card">
+                    <!-- Case ID -->
+                    <div class="receipt-row">
+                        <span class="receipt-label">Case ID</span>
+                        <span class="receipt-value" id="case-id">SC-2026-091547</span>
+                    </div>
+
+                    <!-- Timestamp -->
+                    <div class="receipt-row">
+                        <span class="receipt-label">Filed</span>
+                        <span class="receipt-value" id="case-time">Jun 27, 2026 at 2:10 PM</span>
+                    </div>
+
+                    <!-- Divider -->
+                    <div style="height:1px;background:#FFD4B3;margin:0.75rem 0;"></div>
+
+                    <!-- What Happened -->
+                    <div class="receipt-row">
+                        <span class="receipt-label">Description</span>
+                        <span class="receipt-value receipt-value--multiline" id="case-description">Scam report
+                            submitted</span>
+                    </div>
+
+                    <!-- Affected Bank -->
+                    <div class="receipt-row">
+                        <span class="receipt-label">Affected Bank</span>
+                        <span class="receipt-value" id="case-bank">Pending</span>
+                    </div>
+
+                    <!-- Divider -->
+                    <div style="height:1px;background:#FFD4B3;margin:0.75rem 0;"></div>
+
+                    <!-- Protocols Triggered -->
+                    <p class="receipt-section-title">Protocols Activated</p>
+                    <div class="protocol-list" id="protocol-list">
+                        <div class="protocol-item">
+                            <svg width="14" height="14" fill="#16a34a" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                    clip-rule="evenodd"></path>
+                            </svg>
+                            <span>Family Members Notified</span>
+                        </div>
+                        <div class="protocol-item">
+                            <svg width="14" height="14" fill="#16a34a" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                    clip-rule="evenodd"></path>
+                            </svg>
+                            <span>Bank Fraud Department Contacted</span>
+                        </div>
+                        <div class="protocol-item">
+                            <svg width="14" height="14" fill="#16a34a" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                    clip-rule="evenodd"></path>
+                            </svg>
+                            <span>Local Authorities Notified</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal: What Happens Now (hidden initially) -->
+                <div id="what-happens-modal" class="modal hidden">
+                    <div class="modal-overlay"></div>
+                    <div class="modal-content">
+                        <button id="modal-close" class="modal-close">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                        <p class="font-700 text-lg text-gray-900 mb-3">What happens now?</p>
+                        <ul class="text-sm text-gray-700 space-y-2">
+                            <li class="flex gap-2">
+                                <span class="text-orange-accent flex-shrink-0">→</span>
+                                <span>Your bank will review the fraud claim within 24-48 hours</span>
+                            </li>
+                            <li class="flex gap-2">
+                                <span class="text-orange-accent flex-shrink-0">→</span>
+                                <span>Authorities will follow up independently</span>
+                            </li>
+                            <li class="flex gap-2">
+                                <span class="text-orange-accent flex-shrink-0">→</span>
+                                <span>Keep this case ID handy if they contact you</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="icon-button-group">
+                    <a href="home.html" class="icon-button">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 12l2-3m0 0l7-4 7 4M5 9v10a1 1 0 001 1h12a1 1 0 001-1V9m-9 11l4-4m0 0l4 4m-4-4v4">
+                            </path>
+                        </svg>
+                        <span>Go Home</span>
+                    </a>
+                    <a href="reports.html" class="icon-button">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                            </path>
+                        </svg>
+                        <span>View Report</span>
+                    </a>
+                    <a href="kiko.html" class="icon-button text-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
+                            </path>
+                        </svg>
+                        <span>Chat with Kiko</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Generate Case ID
+            const caseId = 'SC-' + new Date().getFullYear() + '-' + Math.random().toString().slice(2, 8).padStart(6, '0');
+            document.getElementById('case-id').textContent = caseId;
+
+            // Format timestamp
+            const now = new Date();
+            const timeStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                + ' at ' + now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+            document.getElementById('case-time').textContent = timeStr;
+
+            // Populate description from alert-2
+            if (window._caseDescription) {
+                const desc = window._caseDescription;
+                const preview = desc.length > 100 ? desc.slice(0, 100) + '…' : desc;
+                document.getElementById('case-description').textContent = preview;
+            }
+
+            // Populate bank from alert-2
+            if (window._selectedBank) {
+                document.getElementById('case-bank').textContent = window._selectedBank.name + ' (' + window._selectedBank.account_type + ')';
+            }
+
+            // Show modal after 2 seconds
+            setTimeout(() => {
+                const modal = document.getElementById('what-happens-modal');
+                modal.classList.remove('hidden');
+            }, 2000);
+
+            // Close modal
+            const closeBtn = document.getElementById('modal-close');
+            const modalOverlay = document.querySelector('.modal-overlay');
+
+            function closeModalAndShowToast() {
+                document.getElementById('what-happens-modal').classList.add('hidden');
+                showRedirectToast();
+            }
+
+            closeBtn.addEventListener('click', closeModalAndShowToast);
+            modalOverlay.addEventListener('click', closeModalAndShowToast);
+
+            // Redirect Toast
+            function showRedirectToast() {
+                const toast = document.getElementById('redirect-toast');
+                toast.classList.remove('hidden');
+
+                let countdown = 10;
+                const countdownEl = document.getElementById('redirect-countdown');
+
+                const interval = setInterval(() => {
+                    countdown--;
+                    countdownEl.textContent = countdown;
+
+                    if (countdown <= 0) {
+                        clearInterval(interval);
+                        window.location.href = 'reports.html';
+                    }
+                }, 1000);
+            }
+        });
+    </script>
+
+</body>
+
+</html>

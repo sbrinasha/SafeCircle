@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeCircle - Banks</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 
+    <style>
+        * {
+            outline: 1px solid red !important;
+        }
+    </style> -->
+
+    <!-- Tailwind Config for Custom Colors -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'orange-pastel': '#FFD4B3',
+                        'orange-accent': '#FF8C42',
+                        'orange-dark': '#FF6B35',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles/style.css">
+
+    <!-- Navbar Script -->
+    <script src="script/navbar.js"></script>
+</head>
+
+<body
+    class="bg-gradient-to-br from-orange-pastel via-orange-100 to-white min-h-screen flex items-center justify-center md:py-5 p-0">
+
+    <div class="main-container">
+        <!-- Card Container -->
+        <div class="app-shell pb-24">
+
+            <!-- Header -->
+            <div
+                class="bg-gradient-to-r from-orange-accent to-orange-dark text-white rounded-b-2xl p-6 space-y-1 -mx-6 sm:-mx-8 px-6 sm:px-8">
+                <h1 class="text-2xl font-bold">Banks</h1>
+                <p class="text-sm text-orange-100">List of user's banks</p>
+            </div>
+
+            <!-- Banks Section -->
+            <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-lg font-semibold text-gray-700">Your Banks (<span id="bank-count">0</span>)</h2>
+                    <button
+                        class="bg-gradient-to-r from-orange-accent to-orange-dark text-white font-semibold py-2 px-3 rounded-xl text-sm hover:shadow-md transition-shadow"
+                        data-action="add-bank">
+                        + Add Bank
+                    </button>
+                </div>
+
+                <!-- Banks Container -->
+                <div id="banks-container" class="space-y-3"></div>
+            </div>
+
+            <!-- Navbar Container -->
+            <div id="navbar-container"></div>
+        </div>
+    </div>
+
+    <!-- Load Mock Data -->
+    <script src="script/javascript.js"></script>
+
+    <!-- Initialize Navbar -->
+    <script>
+        renderNavbar('navbar-container', 'banks');
+
+        // Populate banks from mock data
+        function populateBanks() {
+            const container = document.getElementById('banks-container');
+            const banks = mock_data.banks;
+
+            document.getElementById('bank-count').textContent = banks.length;
+
+            const banksHTML = banks.map(b => `
+                <div class="bg-orange-50 rounded-2xl p-4 border border-orange-pastel space-y-3">
+                    <!-- Bank Header with Logo -->
+                    <div class="flex items-start justify-between">
+                        <div class="flex items-center space-x-3 flex-1">
+                            <div class="w-14 h-14 rounded-xl shrink-0 overflow-hidden">
+                                <img src="img/${b.logo}" alt="${b.name}" style="width: 100%; height: 100%; object-fit: cover;">
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-semibold text-gray-800">${b.name}</h3>
+                                <p class="text-xs text-gray-500">${b.account_type}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card Details -->
+                    <div class="pt-2 border-t border-orange-pastel space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-gray-600 font-medium">Card Number</span>
+                            <span class="text-sm font-mono text-gray-800">**** **** **** ${b.card_number}</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-gray-600 font-medium">Contact</span>
+                            <span class="text-sm text-gray-800">${b.contact_number}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = banksHTML;
+        }
+
+        // Initialize on page load
+        populateBanks();
+
+        // Toggle Switch Handler
+        document.querySelectorAll('.toggle-switch').forEach(button => {
+            button.addEventListener('click', function () {
+                this.classList.toggle('active');
+                const state = this.classList.contains('active') ? 'on' : 'off';
+                this.setAttribute('data-state', state);
+                const method = this.getAttribute('data-method');
+                console.log(`${method.charAt(0).toUpperCase() + method.slice(1)}: ${state}`);
+            });
+        });
+
+        // Add Bank Handler
+        document.querySelector('[data-action="add-bank"]').addEventListener('click', function () {
+            console.log('Add Bank clicked');
+            // TODO: Implement add bank modal/page
+        });
+    </script>
+</body>
+
+</html>

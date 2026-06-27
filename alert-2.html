@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeCircle - Alert</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 
+    <style>
+        * {
+            outline: 1px solid red !important;
+        }
+    </style> -->
+
+    <!-- Tailwind Config for Custom Colors -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'orange-pastel': '#FFD4B3',
+                        'orange-accent': '#FF8C42',
+                        'orange-dark': '#FF6B35',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles/style.css">
+
+</head>
+
+<body
+    class="bg-gradient-to-br from-orange-pastel via-orange-100 to-white min-h-screen flex items-center justify-center md:py-5 p-0">
+
+    <div class="main-container">
+        <!-- Card Container -->
+        <div class="app-shell" style="padding-top: 0 !important;">
+
+            <!-- Sticky Header -->
+            <div class="flow-header rounded-b-2xl">
+                <img src="img/safecircle.png" alt="SafeCircle" class="w-10 h-10 object-contain flex-shrink-0">
+                <div>
+                    <p class="text-sm font-bold text-white">SafeSpace Protocol Active</p>
+                    <p class="text-xs text-orange-100">Processing your case...</p>
+                </div>
+                <div class="flow-header-dot ml-auto"></div>
+            </div>
+
+            <!-- Flow Feed -->
+            <div class="flow-feed" id="flow-feed"></div>
+
+        </div>
+    </div>
+
+    <!-- Mock Data -->
+    <script src="script/javascript.js"></script>
+
+    <!-- Flow Script -->
+    <script>
+        // ── Helpers ──────────────────────────────────────────────
+        const feed = document.getElementById('flow-feed');
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        function scrollToBottom() {
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+
+        function appendStep(id, title, bodyHTML) {
+            const el = document.createElement('div');
+            el.id = id;
+            el.className = 'flow-step flow-step--active';
+            el.innerHTML = `
+                <div class="step-header">
+                    <div class="step-icon" id="${id}-icon">
+                        <div class="spinner"></div>
+                    </div>
+                    <span class="step-title">${title}</span>
+                </div>
+                <div class="step-body" id="${id}-body">${bodyHTML}</div>
+            `;
+            feed.appendChild(el);
+            scrollToBottom();
+            return el;
+        }
+
+        function completeStep(el, summaryText) {
+            const id = el.id;
+            el.className = 'flow-step flow-step--complete';
+            el.innerHTML = `
+                <div class="step-header">
+                    <div class="step-icon">
+                        <svg width="22" height="22" fill="none" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" fill="#d1fae5"/>
+                            <path d="M7 13l3 3 7-7" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <span class="step-title step-title--complete">${el.querySelector('.step-title').textContent}</span>
+                    <span class="step-summary">${summaryText}</span>
+                </div>
+            `;
+        }
+
+        function animateProgress(fillEl, durationMs) {
+            return new Promise(resolve => {
+                fillEl.style.transition = `width ${durationMs}ms linear`;
+                fillEl.style.width = '100%';
+                setTimeout(resolve, durationMs);
+            });
+        }
+
+        // ── Steps ─────────────────────────────────────────────────
+        async function step1_init() {
+            const el = appendStep('step1', 'Initializing SafeSpace Protocols', '');
+            await sleep(2000);
+            completeStep(el, 'Ready');
+        }
+
+        async function step2_describe() {
+            return new Promise(resolve => {
+                const el = appendStep('step2', 'Describe What Happened',
+                    `<textarea class="flow-textarea" id="describe-input" rows="4" placeholder="Describe what happened in detail..."></textarea>
+                     <div style="margin-top: 1rem;">
+                        <label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem; background: #FFF5EB; border: 1px dashed #FFD4B3; border-radius: 0.5rem; cursor: pointer; font-size: 0.875rem; color: #FF8C42;">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"/></svg>
+                            Add images (optional)
+                            <input type="file" id="image-input" multiple accept="image/*" style="display: none;">
+                        </label>
+                     </div>
+                     <div id="image-preview" style="margin-top: 0.75rem; display: flex; flex-wrap: wrap; gap: 0.5rem;"></div>
+                     <button class="flow-submit-btn" id="describe-submit">Submit</button>`
+                );
+                // Remove spinner — waiting for user
+                document.getElementById('step2-icon').innerHTML = `
+                    <div style="width:22px;height:22px;border-radius:50%;background:#FFD4B3;display:flex;align-items:center;justify-content:center;">
+                        <svg width="12" height="12" fill="#FF8C42" viewBox="0 0 20 20"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"/><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd"/></svg>
+                    </div>`;
+                scrollToBottom();
+
+                const imageInput = document.getElementById('image-input');
+                const imagePreview = document.getElementById('image-preview');
+
+                imageInput.addEventListener('change', (e) => {
+                    imagePreview.innerHTML = '';
+                    Array.from(e.target.files).forEach((file, index) => {
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                            const img = document.createElement('img');
+                            img.src = event.target.result;
+                            img.style.cssText = 'width: 60px; height: 60px; object-fit: cover; border-radius: 0.5rem; border: 1px solid #FFD4B3;';
+                            imagePreview.appendChild(img);
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                });
+
+                document.getElementById('describe-submit').addEventListener('click', () => {
+                    const val = document.getElementById('describe-input').value.trim();
+                    if (!val) return;
+                    window._caseDescription = val;
+                    const preview = val.length > 30 ? val.slice(0, 30) + '…' : val;
+                    completeStep(el, preview);
+                    resolve();
+                });
+            });
+        }
+
+        async function step3_family() {
+            const members = mock_data.mock_family_members;
+            const rowsHTML = members.map(m => `
+                <div class="person-row" id="person-row-${m.member_id}">
+                    <div class="person-avatar">${m.name.charAt(0)}</div>
+                    <div class="person-info">
+                        <div class="person-name">${m.name}</div>
+                        <div class="person-relation">${m.relation}</div>
+                    </div>
+                    <div class="person-status" id="person-status-${m.member_id}">
+                        <div class="person-spinner"></div>
+                    </div>
+                </div>
+            `).join('');
+
+            const el = appendStep('step3', 'Notifying Family Members', rowsHTML);
+            scrollToBottom();
+
+            for (const m of members) {
+                await sleep(1200);
+                document.getElementById(`person-status-${m.member_id}`).innerHTML = `
+                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" fill="#d1fae5"/>
+                        <path d="M7 13l3 3 7-7" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>`;
+            }
+
+            await sleep(500);
+            completeStep(el, '3 notified');
+        }
+
+        async function step4_bank() {
+            return new Promise(resolve => {
+                const banks = mock_data.banks;
+                const cardsHTML = banks.map(b => `
+                    <div class="bank-card" data-bank-id="${b.bank_id}" data-action="select-bank">
+                        <div class="bank-avatar"><img src="img/${b.logo}" alt="${b.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;"></div>
+                        <div class="bank-info">
+                            <div class="bank-name">${b.name}</div>
+                            <div class="bank-type">${b.account_type}</div>
+                            <div class="bank-number">•••• •••• •••• ${b.card_number}</div>
+                        </div>
+                        <div style="color:#e5e7eb;">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </div>
+                    </div>
+                `).join('');
+
+                const el = appendStep('step4', 'Which bank was affected?', cardsHTML);
+
+                // Remove spinner — waiting for user
+                document.getElementById('step4-icon').innerHTML = `
+                    <div style="width:22px;height:22px;border-radius:50%;background:#FFD4B3;display:flex;align-items:center;justify-content:center;">
+                        <svg width="12" height="12" fill="#FF8C42" viewBox="0 0 20 20"><path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4zM2 9v7a2 2 0 002 2h12a2 2 0 002-2V9H2z"/></svg>
+                    </div>`;
+                scrollToBottom();
+
+                document.getElementById('step4-body').addEventListener('click', e => {
+                    const card = e.target.closest('[data-action="select-bank"]');
+                    if (!card) return;
+
+                    document.querySelectorAll('.bank-card').forEach(c => c.classList.remove('selected'));
+                    card.classList.add('selected');
+
+                    const bankId = parseInt(card.dataset.bankId);
+                    window._selectedBank = banks.find(b => b.bank_id === bankId);
+
+                    setTimeout(() => {
+                        completeStep(el, window._selectedBank.name);
+                        resolve();
+                    }, 400);
+                });
+            });
+        }
+
+        async function step5_contactBank() {
+            const bankName = window._selectedBank ? window._selectedBank.name : 'Your Bank';
+            const el = appendStep('step5', `Contacting ${bankName}`,
+                `<p class="text-xs text-gray-500 mt-2 mb-1">Reaching fraud department...</p>
+                 <div class="progress-track"><div class="progress-fill" id="bank-progress"></div></div>`
+            );
+            scrollToBottom();
+            await sleep(300);
+            await animateProgress(document.getElementById('bank-progress'), 5000);
+            completeStep(el, 'Bank notified ✓');
+        }
+
+        async function step6_police() {
+            const el = appendStep('step6', 'Notifying Local Authorities',
+                `<p class="text-xs text-gray-500 mt-2 mb-1">Filing automated incident report...</p>
+                 <div class="progress-track"><div class="progress-fill" id="police-progress"></div></div>`
+            );
+            scrollToBottom();
+            await sleep(300);
+            await animateProgress(document.getElementById('police-progress'), 5000);
+            completeStep(el, 'Authorities notified ✓');
+        }
+
+        async function step7_suggestions() {
+            const suggestions = [
+                { icon: '🚫', text: 'Do not transfer any more money to unknown accounts.' },
+                { icon: '🔑', text: 'Change passwords on all affected accounts immediately.' },
+                { icon: '📋', text: 'Monitor your bank statements closely for the next 30 days.' },
+                { icon: '📸', text: 'Save all evidence — screenshots, messages, and transaction IDs.' },
+                { icon: '💙', text: 'Stay calm — your SafeCircle is actively supporting you.' },
+            ];
+
+            const suggestionsHTML = suggestions.map(s => `
+                <div class="suggestion-card">
+                    <div class="suggestion-icon" style="font-size:0.875rem;">${s.icon}</div>
+                    <p class="suggestion-text">${s.text}</p>
+                </div>
+            `).join('');
+
+            const el = appendStep('step7', 'What to do next',
+                `${suggestionsHTML}
+                 <button class="flow-proceed-btn" id="proceed-btn">I understand, proceed →</button>`
+            );
+
+            // Replace spinner with info icon
+            document.getElementById('step7-icon').innerHTML = `
+                <div style="width:22px;height:22px;border-radius:50%;background:#dbeafe;display:flex;align-items:center;justify-content:center;">
+                    <svg width="12" height="12" fill="#2563eb" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
+                </div>`;
+
+            scrollToBottom();
+
+            document.getElementById('proceed-btn').addEventListener('click', () => {
+                window.location.href = 'alert-3.html';
+            });
+        }
+
+        // ── Run Flow ──────────────────────────────────────────────
+        async function runFlow() {
+            await step1_init();
+            await step2_describe();
+            await step3_family();
+            await step4_bank();
+            await step5_contactBank();
+            await step6_police();
+            await step7_suggestions();
+        }
+
+        document.addEventListener('DOMContentLoaded', runFlow);
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeCircle - Alert</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 
+    <style>
+        * {
+            outline: 1px solid red !important;
+        }
+    </style> -->
+
+    <!-- Tailwind Config for Custom Colors -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'orange-pastel': '#FFD4B3',
+                        'orange-accent': '#FF8C42',
+                        'orange-dark': '#FF6B35',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles/style.css">
+
+</head>
+
+<body
+    class="bg-gradient-to-br from-orange-pastel via-orange-100 to-white min-h-screen flex items-center justify-center md:py-5 p-0">
+
+    <div class="main-container">
+        <!-- Card Container -->
+        <div class="app-shell">
+            <!-- Alert Container -->
+            <div class="alert-container">
+                <!-- Warning Icon -->
+                <div class="warning-icon-container">
+                    <svg class="w-16 h-16 text-orange-dark" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                            d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+
+                <!-- Title and Message -->
+                <div class="text-center space-y-3 mb-8">
+                    <h1 class="text-3xl font-bold text-gray-900">Scam Alert!</h1>
+                    <p class="text-base text-gray-700">Are you absolutely confident you've been scammed?</p>
+                    <p class="text-sm text-gray-600">This action is serious and will trigger emergency protocols.</p>
+                </div>
+
+                <!-- Cancel Button -->
+                <button id="cancel-btn" class="cancel-alert-button" data-action="cancel">Cancel Alert</button>
+
+                <!-- Countdown Timer -->
+                <div class="countdown-wrapper mb-8">
+                    <div class="countdown-container">
+                        <div class="countdown-progress" id="countdown-progress"></div>
+                        <div class="countdown-text">
+                            <span class="countdown-number" id="countdown-number">10</span>
+                            <span class="countdown-label">seconds</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-600 text-center mt-3">Waiting for confirmation window...</p>
+                </div>
+
+                <!-- Swipe Confirmation Area (Hidden until countdown finishes) -->
+                <div id="swipe-area" class="swipe-area hidden">
+                    <div class="swipe-instruction">
+                        <p class="text-sm font-medium text-gray-700 mb-2">Swipe to confirm scam report</p>
+                        <p class="text-xs text-gray-600">Drag all the way to the right →</p>
+                    </div>
+                    <div class="swipe-track">
+                        <div class="swipe-thumb" id="swipe-thumb" data-action="swipe-confirm">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
+                                    clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Confirmation Message Modal -->
+                <div id="confirmation-modal" class="modal hidden">
+                    <div class="modal-overlay"></div>
+                    <div class="modal-content">
+                        <div class="flex flex-col items-center space-y-3">
+                            <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
+                                <svg class="w-8 h-8 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                            <h2 class="text-xl font-bold text-gray-900">Confirmed</h2>
+                            <p class="text-sm text-gray-700 text-center">Your scam report has been received.
+                                Redirecting...
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Initialize countdown and swipe on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            initializeAlert();
+            initializeCancelButton();
+        });
+
+        function initializeCancelButton() {
+            const cancelBtn = document.getElementById('cancel-btn');
+            if (cancelBtn) {
+                cancelBtn.addEventListener('click', function () {
+                    window.location.href = 'home.html';
+                });
+            }
+        }
+
+        function initializeAlert() {
+            let countdown = 10;
+            const countdownNumber = document.getElementById('countdown-number');
+            const countdownProgress = document.getElementById('countdown-progress');
+            const swipeArea = document.getElementById('swipe-area');
+
+            // Start countdown
+            const countdownInterval = setInterval(function () {
+                countdown--;
+                countdownNumber.textContent = countdown;
+                const progressPercent = ((10 - countdown) / 10) * 100;
+                countdownProgress.style.width = progressPercent + '%';
+
+                if (countdown <= 0) {
+                    clearInterval(countdownInterval);
+                    // Show swipe area when countdown finishes
+                    swipeArea.classList.remove('hidden');
+                    initializeSwipe();
+                }
+            }, 1000);
+        }
+
+        function initializeSwipe() {
+            const swipeThumb = document.getElementById('swipe-thumb');
+            const swipeTrack = document.querySelector('.swipe-track');
+            let isSliding = false;
+            let startX = 0;
+            let currentX = 0;
+
+            const trackRect = swipeTrack.getBoundingClientRect();
+            const thumbRect = swipeThumb.getBoundingClientRect();
+            const maxDistance = trackRect.width - thumbRect.width;
+            const swipeThreshold = maxDistance * 0.8; // 80% to confirm
+
+            // Mouse events
+            swipeThumb.addEventListener('mousedown', startSwipe);
+            document.addEventListener('mousemove', moveSwipe);
+            document.addEventListener('mouseup', endSwipe);
+
+            // Touch events
+            swipeThumb.addEventListener('touchstart', startSwipe);
+            document.addEventListener('touchmove', moveSwipe);
+            document.addEventListener('touchend', endSwipe);
+
+            function startSwipe(e) {
+                isSliding = true;
+                startX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+                swipeThumb.style.cursor = 'grabbing';
+            }
+
+            function moveSwipe(e) {
+                if (!isSliding) return;
+
+                e.preventDefault();
+                const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+                currentX = Math.max(0, Math.min(clientX - startX, maxDistance));
+
+                swipeThumb.style.transform = `translateX(${currentX}px)`;
+            }
+
+            function endSwipe() {
+                isSliding = false;
+                swipeThumb.style.cursor = 'grab';
+
+                if (currentX >= swipeThreshold) {
+                    // Swipe successful
+                    confirmScam();
+                } else {
+                    // Reset swipe
+                    swipeThumb.style.transform = 'translateX(0)';
+                    currentX = 0;
+                }
+            }
+        }
+
+        function confirmScam() {
+            const swipeArea = document.getElementById('swipe-area');
+            const confirmationModal = document.getElementById('confirmation-modal');
+
+            swipeArea.classList.add('hidden');
+            confirmationModal.classList.remove('hidden');
+
+            // Redirect after 3 seconds
+            setTimeout(function () {
+                window.location.href = 'alert-2.html';
+            }, 3000);
+        }
+    </script>
+
+</body>
+
+</html>
